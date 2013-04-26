@@ -1,0 +1,11 @@
+﻿#Prenom;Nom;Sexe;Pere;Mere;Date de naissance
+Paul;Dupuit;M;;;12/03/1940
+Marie;Loup;F;;;26/11/1943
+Anne;Valaro;F;;;;
+Pierre;Dupont;M;;;12/09/1965
+Julie;Dupuit;F;Paul Dupuit;Marie Loup;16/10/1069
+Simon;Valaro;M;;Anne Valaro;25/03/1962
+Marie;Lenoir;F;;;11/04/1963
+Paul;Dupont;M;Pierre Dupont;Julie Dupuit;31/03/1990
+Marie;Valaro;F;Simon Valaro;Marie Lenoir;24/02/1991
+Jean;Dupont;M;Paul Dupont;Marie Valaro;25/01/2010

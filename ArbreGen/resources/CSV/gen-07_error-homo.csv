@@ -1,0 +1,23 @@
+﻿# ERROR Certaines personnes ont deux peres ou deux meres :
+# - Marie Valaro (145)
+
+#id|Prenom|Nom|Sexe|Pere|Mere|Date de naissance
+1|Paul|Dupuit|M|||12/03/1940
+2|Marie|Loup|F|||26/11/1943
+3|Damien|Boulanger|M|||24/06/1941
+4|Jeanne|Martin|F|||24/06/1941
+5|Anne|Valaro|F||||
+9|Pierre|Dupont|M|||12/09/1965
+15|Julie|Dupuit|F|1|2|16/10/1069
+36|Lucie|Bertolo|F|||25/12/1963
+45|Pierre|Boulanger|M|3|4|12/12/1965
+46|Marie|Boulanger|F|3|4|16/05/1968
+48|Julie|Boulanger|F|3|4|21/03/1973
+63|Simon|Valaro|M||5|25/03/1962
+76|Marie|Lenoir|F|||11/04/1963
+112|Paul|Dupont|M|9|15|31/03/1990
+145|Marie|Valaro|F|63|9|24/02/1991
+203|Jean|Dupont|M|112|145|25/01/2010
+306|Anne|Dupont|F|9|15|12/04/1993
+307|Adrien|Dupont|M|9|15|05/12/1995
+309|Damien|Boulanger|M|45|36|05/11/1981
