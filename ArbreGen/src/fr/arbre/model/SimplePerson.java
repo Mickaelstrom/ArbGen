@@ -5,9 +5,10 @@ import java.util.List;
 public class SimplePerson implements Person {
 	private static final long serialVersionUID = -4490492722630643380L;
 	private static int currentId = 1; // incrémenté à la création d'une personne
-	
+										// (0=erreur)
+
 	// -----------------------------------------------------------------
-	
+
 	private String name;
 	private String firstname;
 	private String birthdate;
@@ -30,8 +31,24 @@ public class SimplePerson implements Person {
 		this.fatherId = fatherId;
 		this.childrenId = childrenId;
 
-		id = currentId;
-		currentId++;
+		id = generateId();
+	}
+
+	public SimplePerson() {
+		this.name = "";
+		this.firstname = "";
+		this.birthdate = "";
+		this.deathdate = "";
+		this.gender = Gender.MALE;
+		this.motherId = 0;
+		this.fatherId = 0;
+		this.childrenId = null;
+
+		id = generateId();
+	}
+
+	private int generateId() {
+		return currentId++;
 	}
 
 	// Getters --------------------------------------------
