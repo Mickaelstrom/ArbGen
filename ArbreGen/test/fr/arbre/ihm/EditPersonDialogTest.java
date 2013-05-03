@@ -8,6 +8,7 @@ import java.awt.event.ActionListener;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.UIManager;
 
 import fr.arbre.ihm.EditPersonDialog;
 import fr.arbre.model.Gender;
@@ -16,15 +17,23 @@ import fr.arbre.model.SimplePerson;
 /**
  * Test de la fenêtre EditPersonDialog
  * 
- * -> Changement du titre de la fenêtre
- * -> Test création d'une personne
- * -> Test édition d'une personne
+ * -> Changement du titre de la fenêtre -> Test création d'une personne -> Test
+ * édition d'une personne
  */
 public class EditPersonDialogTest {
 
 	static SimplePerson p1, p2;
 
 	public static void main(String[] args) {
+
+		// Changer le style des fenêtres
+		try {
+			UIManager
+					.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+
 		final JFrame frame = new JFrame("EditPersonDialog Test");
 		JPanel panel = new JPanel();
 		final JButton b1 = new JButton("Créer personne");
