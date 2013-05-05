@@ -48,6 +48,7 @@ public class EditPersonDialogTest {
 		b1.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				System.out.println("Création d'une personne id1");
 				p1 = EditPersonDialog.showDialog(frame);
 				System.out.println("id1= " + p1.getId());
 				System.out.println("id2= " + p2.getId() + " " + p2.toString());
@@ -57,6 +58,7 @@ public class EditPersonDialogTest {
 		b2.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				System.out.println("Edition de la personne id2");
 				p2 = EditPersonDialog.showDialog(frame, p2);
 				System.out.println("id1= " + p1.getId());
 				System.out.println("id2= " + p2.getId() + " " + p2.toString());
