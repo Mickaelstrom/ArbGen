@@ -2,8 +2,8 @@ package fr.arbre.model;
 
 import java.util.List;
 
+@SuppressWarnings("serial")
 public class SimplePerson implements Person {
-	private static final long serialVersionUID = -4490492722630643380L;
 	/**
 	 * Les identifiants sont attribués à partir de 1 (personne de qui l'arbre va
 	 * être produit), puis incrémenté à la création de chaque personne
