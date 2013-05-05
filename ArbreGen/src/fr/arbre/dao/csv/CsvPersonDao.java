@@ -67,4 +67,30 @@ public class CsvPersonDao {
 			System.out.println(person.toString());
 		}
 	}
+	
+	/**
+	 * Récupère une personne en fonction de l'id passé
+	 * @param id identifiant de la personne à chercher
+	 * @return
+	 */
+	public SimplePerson getPerson(int id) throws PersonIdException {
+		if(id < 1) // 1 personne la plus basse
+			throw new PersonIdException("Valeur de l'index de la personne incorrect");
+		
+		SimplePerson returnPerson = null;
+
+		for(SimplePerson person : persons){
+			if(person.getId() == id)
+			{
+				returnPerson = person;
+				break;
+			}
+		}
+	
+		if(returnPerson == null)
+			throw new PersonIdException("Personne non trouvée");
+		
+		return returnPerson;
+	}
+
 }
