@@ -5,14 +5,12 @@ import java.util.List;
 
 public interface Person extends Serializable {
 
-	// Getters --------------------------------------------
+	// Getters ----------------------------------------------------------------
 	String getName();
 
 	String getFirstname();
 
 	String getBirthdate();
-
-	String getDeathdate();
 
 	Gender getGender();
 
@@ -24,14 +22,14 @@ public interface Person extends Serializable {
 
 	List<Integer> getChildrenId();
 
-	// Setters --------------------------------------------
+	String getPicname();
+
+	// Setters ----------------------------------------------------------------
 	void setName(String name);
 
 	void setFirstname(String firstname);
 
 	void setBirthdate(String birthdate);
-
-	void setDeathdate(String deathdate);
 
 	void setGender(Gender gender);
 
@@ -42,4 +40,6 @@ public interface Person extends Serializable {
 	void setFatherId(int fid);
 
 	void setChildrenId(List<Integer> childrenId);
+
+	void setPicname(String picname);
 }

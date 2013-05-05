@@ -4,45 +4,39 @@ import java.util.List;
 
 public class SimplePerson implements Person {
 	private static final long serialVersionUID = -4490492722630643380L;
-	private static int currentId = 1; // incrémenté à la création d'une personne
-										// (0=erreur)
+	/**
+	 * Les identifiants sont attribués à partir de 1 (personne de qui l'arbre va
+	 * être produit), puis incrémenté à la création de chaque personne
+	 */
+	private static int currentId = 1;
 
-	// -----------------------------------------------------------------
+	// ------------------------------------------------------------------------
 
 	private String name;
 	private String firstname;
 	private String birthdate;
-	private String deathdate;
 	private Gender gender;
 	private int id;
 	private int motherId;
 	private int fatherId;
 	private List<Integer> childrenId;
+	private String picname;
+
+	public SimplePerson() {
+		this("", "", "", Gender.MALE, 0, 0, null, "");
+	}
 
 	public SimplePerson(String name, String firstname, String birthdate,
-			String deathdate, Gender gender, int motherId, int fatherId,
-			List<Integer> childrenId) {
+			Gender gender, int motherId, int fatherId,
+			List<Integer> childrenId, String picname) {
 		this.name = name;
 		this.firstname = firstname;
 		this.birthdate = birthdate;
-		this.deathdate = deathdate;
 		this.gender = gender;
 		this.motherId = motherId;
 		this.fatherId = fatherId;
 		this.childrenId = childrenId;
-
-		id = generateId();
-	}
-
-	public SimplePerson() {
-		this.name = "";
-		this.firstname = "";
-		this.birthdate = "";
-		this.deathdate = "";
-		this.gender = Gender.MALE;
-		this.motherId = 0;
-		this.fatherId = 0;
-		this.childrenId = null;
+		this.picname = picname;
 
 		id = generateId();
 	}
@@ -51,7 +45,7 @@ public class SimplePerson implements Person {
 		return currentId++;
 	}
 
-	// Getters --------------------------------------------
+	// Getters ----------------------------------------------------------------
 
 	@Override
 	public String getName() {
@@ -69,8 +63,8 @@ public class SimplePerson implements Person {
 	}
 
 	@Override
-	public String getDeathdate() {
-		return deathdate;
+	public String getPicname() {
+		return picname;
 	}
 
 	@Override
@@ -93,7 +87,7 @@ public class SimplePerson implements Person {
 		return this.childrenId;
 	}
 
-	// Setters --------------------------------------------
+	// Setters ----------------------------------------------------------------
 
 	@Override
 	public void setName(String name) {
@@ -108,11 +102,6 @@ public class SimplePerson implements Person {
 	@Override
 	public void setBirthdate(String birthdate) {
 		this.birthdate = birthdate;
-	}
-
-	@Override
-	public void setDeathdate(String deathdate) {
-		this.deathdate = deathdate;
 	}
 
 	@Override
@@ -135,7 +124,12 @@ public class SimplePerson implements Person {
 		this.childrenId = childrenId;
 	}
 
-	// Other functions
+	@Override
+	public void setPicname(String picname) {
+		this.picname = picname;
+	}
+
+	// Other functions --------------------------------------------------------
 
 	@Override
 	public int getId() {
