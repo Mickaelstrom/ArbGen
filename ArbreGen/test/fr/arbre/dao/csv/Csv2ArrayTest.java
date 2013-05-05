@@ -35,6 +35,10 @@ public class Csv2ArrayTest {
 		pan.add(table);
 		frame.setContentPane(pan);
 		frame.setVisible(true);
+		
+		CsvPersonDao dao = CsvPersonDao.getInstance();
+		dao.load("resources/CSV/gen-04.csv");
+		dao.print();
 	}
 
 	public static void columnWidth(JTable table, int width, int maxcolumn) {
