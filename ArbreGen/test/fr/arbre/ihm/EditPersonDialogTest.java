@@ -17,8 +17,11 @@ import fr.arbre.model.SimplePerson;
 /**
  * Test de la fenêtre EditPersonDialog
  * 
- * -> Changement du titre de la fenêtre -> Test création d'une personne -> Test
- * édition d'une personne
+ * -> Changement du titre de la fenêtre
+ * 
+ * -> Test création d'une personne
+ * 
+ * -> Test édition d'une personne
  */
 public class EditPersonDialogTest {
 
@@ -30,6 +33,7 @@ public class EditPersonDialogTest {
 		try {
 			UIManager
 					.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
+			// UIManager.setLookAndFeel("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel");
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
@@ -38,8 +42,8 @@ public class EditPersonDialogTest {
 		JPanel panel = new JPanel();
 		final JButton b1 = new JButton("Créer personne");
 		final JButton b2 = new JButton("Editer personne");
-		p2 = new SimplePerson("nom", "prenom", "12/12/2012", "", Gender.FEMALE,
-				0, 0, null);
+		p2 = new SimplePerson("nom", "prenom", "12/12/2012",  Gender.FEMALE,
+				0, 0, null, "");
 
 		b1.addActionListener(new ActionListener() {
 			@Override
