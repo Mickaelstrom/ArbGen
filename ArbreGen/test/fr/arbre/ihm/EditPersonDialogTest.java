@@ -42,6 +42,7 @@ public class EditPersonDialogTest {
 		JPanel panel = new JPanel();
 		final JButton b1 = new JButton("Créer personne");
 		final JButton b2 = new JButton("Editer personne");
+		p1 = null;
 		p2 = new SimplePerson("nom", "prenom", "12/12/2012",  Gender.FEMALE,
 				0, 0, null, "");
 
@@ -60,7 +61,8 @@ public class EditPersonDialogTest {
 			public void actionPerformed(ActionEvent e) {
 				System.out.println("Edition de la personne id2");
 				p2 = EditPersonDialog.showDialog(frame, p2);
-				System.out.println("id1= " + p1.getId());
+				if(p1 != null)
+					System.out.println("id1= " + p1.getId());
 				System.out.println("id2= " + p2.getId() + " " + p2.toString());
 			}
 		});
