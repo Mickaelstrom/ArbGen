@@ -17,11 +17,15 @@ import fr.arbre.model.SimplePerson;
 /**
  * Test de la fenêtre EditPersonDialog
  * 
+ * <p>
  * -> Changement du titre de la fenêtre
- * 
+ * </p>
+ * <p>
  * -> Test création d'une personne
- * 
+ * </p>
+ * <p>
  * -> Test édition d'une personne
+ * </p>
  */
 public class EditPersonDialogTest {
 
@@ -31,8 +35,7 @@ public class EditPersonDialogTest {
 
 		// Changer le style des fenêtres
 		try {
-			UIManager
-					.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
+			UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
 			// UIManager.setLookAndFeel("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel");
 		} catch (Exception ex) {
 			ex.printStackTrace();
@@ -43,15 +46,16 @@ public class EditPersonDialogTest {
 		final JButton b1 = new JButton("Créer personne");
 		final JButton b2 = new JButton("Editer personne");
 		p1 = null;
-		p2 = new SimplePerson("nom", "prenom", "12/12/2012",  Gender.FEMALE,
-				0, 0, null, "");
+		p2 = new SimplePerson("nom", "prenom", "12/12/2012", Gender.FEMALE, 0, 0, null, "");
 
 		b1.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				System.out.println("Création d'une personne id1");
 				p1 = EditPersonDialog.showDialog(frame);
-				System.out.println("id1= " + p1.getId());
+				System.out.println(p1);
+				if (p1 != null)
+					System.out.println("id1= " + p1.getId());
 				System.out.println("id2= " + p2.getId() + " " + p2.toString());
 			}
 		});
@@ -60,8 +64,11 @@ public class EditPersonDialogTest {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				System.out.println("Edition de la personne id2");
-				p2 = EditPersonDialog.showDialog(frame, p2);
-				if(p1 != null)
+				SimplePerson temp = EditPersonDialog.showDialog(frame, p2);
+				System.out.println(p1);
+				if (temp != null)
+					p2 = temp;
+				if (p1 != null)
 					System.out.println("id1= " + p1.getId());
 				System.out.println("id2= " + p2.getId() + " " + p2.toString());
 			}
