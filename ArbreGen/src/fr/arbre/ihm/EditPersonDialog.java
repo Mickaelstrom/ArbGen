@@ -2,6 +2,7 @@ package fr.arbre.ihm;
 
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.ComponentOrientation;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Frame;
@@ -24,23 +25,22 @@ import javax.swing.border.Border;
 
 import fr.arbre.model.SimplePerson;
 
-// TODO ajouter le bouton confirmer et quitter
-
+/**
+ * Classe qui permet d'afficher une fenetre de création/édition d'une personne
+ * 
+ * Une fenetre peut etre appelé en statique par showDialog
+ */
 @SuppressWarnings("serial")
 public class EditPersonDialog extends JDialog implements ActionListener {
 
-	private final String			ADD_PIC	= "add pic", DEL_PIC = "del pic",
-			ADD_FATHER = "add father", DEL_FATHER = "del father", ADD_MOTHER = "add mother",
-			DEL_MOTHER = "del mother", ADD_CHILD = "add child", DEL_CHILD = "del child", OK = "ok",
-			QUIT = "quit";
+	private final String ADD_PIC = "add pic", DEL_PIC = "del pic", ADD_FATHER = "add father",
+			DEL_FATHER = "del father", ADD_MOTHER = "add mother", DEL_MOTHER = "del mother",
+			ADD_CHILD = "add child", DEL_CHILD = "del child", OK = "ok", QUIT = "quit";
 
 	// -----------------------------------------------------------------
 
-	private static EditPersonDialog	dialog; // la
-											// fenetre
-	private SimplePerson			lambda; // la
-											// personne
-											// édité/crée
+	private static EditPersonDialog dialog; // la fenetre
+	private SimplePerson lambda; // la personne édité/crée
 
 	/**
 	 * Ce showDialog affiche la fenêtre de création d'une personne
@@ -73,9 +73,9 @@ public class EditPersonDialog extends JDialog implements ActionListener {
 
 	/*-----------------------------------------------------------------------*/
 
-	private JLabel		pictureLabel;
-	private JTextField	fatherNameField;
-	private JTextField	motherNameField;
+	private JLabel pictureLabel;
+	private JTextField fatherNameField;
+	private JTextField motherNameField;
 
 	private EditPersonDialog(Frame frame, String title, SimplePerson person) {
 		super(frame, title, true);
@@ -128,10 +128,10 @@ public class EditPersonDialog extends JDialog implements ActionListener {
 		buttonDelPic.setActionCommand(DEL_PIC);
 		buttonDelPic.addActionListener(this);
 
-		JPanel picPanel = new JPanel();
+		JPanel picButtonsPanel = new JPanel();
 		FlowLayout picLayout = new FlowLayout();
-		picPanel.setLayout(picLayout);
-		picPanel.setAlignmentX(CENTER_ALIGNMENT);
+		picButtonsPanel.setLayout(picLayout);
+		picButtonsPanel.setAlignmentX(CENTER_ALIGNMENT);
 
 		JLabel fatherLabel = new JLabel("Père");
 		fatherNameField = new JTextField(15);
@@ -165,21 +165,29 @@ public class EditPersonDialog extends JDialog implements ActionListener {
 		buttonDelMother.setMaximumSize(new Dimension(28, 28));
 		buttonDelMother.setActionCommand(DEL_MOTHER);
 		buttonDelMother.addActionListener(this);
-		
+
 		JButton buttonOk = new JButton("Ok");
 		buttonOk.setActionCommand(OK);
 		buttonOk.addActionListener(this);
-		
+		buttonOk.setAlignmentX(RIGHT_ALIGNMENT);
+
 		JButton buttonCancel = new JButton("Annuler");
 		buttonCancel.setActionCommand(QUIT);
 		buttonCancel.addActionListener(this);
+		buttonCancel.setAlignmentX(RIGHT_ALIGNMENT);
+		
+		JPanel dialogButtonsPanel = new JPanel();
+		dialogButtonsPanel.setComponentOrientation(ComponentOrientation.RIGHT_TO_LEFT);
+		BoxLayout dbLayout = new BoxLayout(dialogButtonsPanel, BoxLayout.X_AXIS);
+		dialogButtonsPanel.setLayout(dbLayout);
+		//dialogButtonsPanel.setAlignmentX(RIGHT_ALIGNMENT);
 
 		// --------------------------------------------------------------------
 
 		// leftPanel.add(lgbPanel);
 
-		picPanel.add(buttonAddPic);
-		picPanel.add(buttonDelPic);
+		picButtonsPanel.add(buttonAddPic);
+		picButtonsPanel.add(buttonDelPic);
 
 		GridBagConstraints c = new GridBagConstraints();
 		c.fill = GridBagConstraints.HORIZONTAL;
@@ -220,12 +228,14 @@ public class EditPersonDialog extends JDialog implements ActionListener {
 		c.weightx = 0;
 		c.gridwidth = 1;
 		rgbPanel.add(buttonDelMother, c);
+		
+		dialogButtonsPanel.add(buttonOk);
+		dialogButtonsPanel.add(buttonCancel);
 
 		rightPanel.add(pictureLabel);
-		rightPanel.add(picPanel);
+		rightPanel.add(picButtonsPanel);
 		rightPanel.add(rgbPanel);
-		rightPanel.add(buttonOk);
-		rightPanel.add(buttonCancel);
+		rightPanel.add(dialogButtonsPanel);
 
 		setLayout(new FlowLayout());
 		add(leftPanel);
