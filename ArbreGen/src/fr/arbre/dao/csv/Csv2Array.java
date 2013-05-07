@@ -8,13 +8,13 @@ import java.util.logging.Logger;
 import java.util.regex.Pattern;
 
 public class Csv2Array {
-	
-	private int max_line;
-	private int max_column;
-	private int Current_line;
-	private String file;
 
-	Csv2Array(String file) {
+	private int		max_line;
+	private int		max_column;
+	private int		Current_line;
+	private String	file;
+
+	public Csv2Array(String file) {
 		this.file = file;
 		this.max_line = 0;
 		this.max_column = 0;
@@ -90,8 +90,7 @@ public class Csv2Array {
 			}
 			br.close();
 		} catch (IOException ex) {
-			Logger.getLogger(Csv2Array.class.getName()).log(Level.SEVERE, null,
-					ex);
+			Logger.getLogger(Csv2Array.class.getName()).log(Level.SEVERE, null, ex);
 		}
 		max_line = compteur;
 		return "EOF";
