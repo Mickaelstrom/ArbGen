@@ -35,26 +35,25 @@ public class EditPersonDialog extends JDialog implements ActionListener {
 
 	private final String ADD_PIC = "add pic", DEL_PIC = "del pic", ADD_FATHER = "add father",
 			DEL_FATHER = "del father", ADD_MOTHER = "add mother", DEL_MOTHER = "del mother",
-			ADD_CHILD = "add child", DEL_CHILD = "del child", OK = "ok", QUIT = "quit";
+			ADD_CHILD = "add child", DEL_CHILD = "del child", OK = "ok", CANCEL = "cancel";
 
 	// -----------------------------------------------------------------
 
 	private static EditPersonDialog dialog; // la fenetre
-	private SimplePerson lambda; // la personne édité/crée
+	private SimplePerson thePerson; // la personne édité/crée
 
 	/**
-	 * Ce showDialog affiche la fenêtre de création d'une personne
+	 * Ce showDialog affiche la fenêtre de création d'une personne.
 	 * 
 	 * @param frameComp
 	 *            Composant par rapport auquel elle est affiché
 	 * @return Une référence sur la SimplePerson créée
 	 */
 	public static SimplePerson showDialog(Component frameComp) {
-		SimplePerson person = new SimplePerson();
 		Frame frame = JOptionPane.getFrameForComponent(frameComp);
-		dialog = new EditPersonDialog(frame, "Créer une personne", person);
+		dialog = new EditPersonDialog(frame, "Créer une personne", new SimplePerson());
 		dialog.setVisible(true);
-		return person;
+		return dialog.getThePerson();
 	}
 
 	/**
@@ -68,7 +67,16 @@ public class EditPersonDialog extends JDialog implements ActionListener {
 		Frame frame = JOptionPane.getFrameForComponent(frameComp);
 		dialog = new EditPersonDialog(frame, "Editer une personne", person);
 		dialog.setVisible(true);
-		return person;
+		return dialog.getThePerson();
+	}
+
+	/**
+	 * Utilisé pour récupérer la personne quand on clique sur le bouton valider ou annuler.
+	 * 
+	 * @return La personne éditée/créée si validation, sinon retourne null (si cancel)
+	 */
+	private SimplePerson getThePerson() {
+		return thePerson;
 	}
 
 	/*-----------------------------------------------------------------------*/
@@ -80,13 +88,16 @@ public class EditPersonDialog extends JDialog implements ActionListener {
 	private EditPersonDialog(Frame frame, String title, SimplePerson person) {
 		super(frame, title, true);
 		this.setIconImage(new ImageIcon("resources/Icons/personne-16.png").getImage());
-		this.setPreferredSize(new Dimension(500, 400));
-		lambda = person;
+		// this.setResizable(false); // TODO ajouter cette option à la fin
+		thePerson = person;
 
+		final int PANEL_HEIGHT = 260; // TODO supprimer quand tout sera ok
 		// PARTIE GAUCHE ------------------------------------------------------
 		JPanel leftPanel = new JPanel();
-		leftPanel.setMinimumSize(new Dimension(200, 400));
-		leftPanel.setPreferredSize(new Dimension(200, 400));
+		leftPanel.setMinimumSize(new Dimension(200, PANEL_HEIGHT)); // TODO supprimer quand tout
+																	// sera ok
+		leftPanel.setPreferredSize(new Dimension(200, PANEL_HEIGHT)); // TODO supprimer quand tout
+																		// sera ok
 
 		BoxLayout leftLayout = new BoxLayout(leftPanel, BoxLayout.Y_AXIS);
 		leftPanel.setLayout(leftLayout);
@@ -99,8 +110,6 @@ public class EditPersonDialog extends JDialog implements ActionListener {
 
 		// PARTIE DROITE ------------------------------------------------------
 		JPanel rightPanel = new JPanel();
-		rightPanel.setMinimumSize(new Dimension(272, 400));
-		rightPanel.setPreferredSize(new Dimension(272, 400));
 
 		BoxLayout rightLayout = new BoxLayout(rightPanel, BoxLayout.Y_AXIS);
 		rightPanel.setLayout(rightLayout);
@@ -109,9 +118,9 @@ public class EditPersonDialog extends JDialog implements ActionListener {
 		GridBagLayout rgbLayout = new GridBagLayout();
 		rgbPanel.setLayout(rgbLayout);
 
-		pictureLabel = new JLabel(new ImageIcon("resources/Pictures/strawberry.jpg"));
-		pictureLabel.setMinimumSize(new Dimension(100, 120));
-		pictureLabel.setPreferredSize(new Dimension(100, 120));
+		pictureLabel = new JLabel(new ImageIcon("resources/Pictures/sangoku.jpg"));
+		pictureLabel.setMinimumSize(new Dimension(140, 140));
+		pictureLabel.setPreferredSize(new Dimension(140, 140));
 		Border border = BorderFactory.createLineBorder(Color.black);
 		pictureLabel.setBorder(border);
 		pictureLabel.setAlignmentX(CENTER_ALIGNMENT);
@@ -134,7 +143,7 @@ public class EditPersonDialog extends JDialog implements ActionListener {
 		picButtonsPanel.setAlignmentX(CENTER_ALIGNMENT);
 
 		JLabel fatherLabel = new JLabel("Père");
-		fatherNameField = new JTextField(15);
+		fatherNameField = new JTextField(18);
 		fatherNameField.setEditable(false);
 		fatherNameField.setText("Franklin Delano Roosevelt"); // TODO à enlever...
 
@@ -151,7 +160,7 @@ public class EditPersonDialog extends JDialog implements ActionListener {
 		buttonDelFather.addActionListener(this);
 
 		JLabel motherLabel = new JLabel("Mère");
-		motherNameField = new JTextField(15);
+		motherNameField = new JTextField(18);
 		motherNameField.setEditable(false);
 
 		JButton buttonAddMother = new JButton(new ImageIcon("resources/Icons/ajouter-16.png"));
@@ -169,18 +178,14 @@ public class EditPersonDialog extends JDialog implements ActionListener {
 		JButton buttonOk = new JButton("Ok");
 		buttonOk.setActionCommand(OK);
 		buttonOk.addActionListener(this);
-		buttonOk.setAlignmentX(RIGHT_ALIGNMENT);
 
 		JButton buttonCancel = new JButton("Annuler");
-		buttonCancel.setActionCommand(QUIT);
+		buttonCancel.setActionCommand(CANCEL);
 		buttonCancel.addActionListener(this);
-		buttonCancel.setAlignmentX(RIGHT_ALIGNMENT);
-		
+
 		JPanel dialogButtonsPanel = new JPanel();
-		dialogButtonsPanel.setComponentOrientation(ComponentOrientation.RIGHT_TO_LEFT);
-		BoxLayout dbLayout = new BoxLayout(dialogButtonsPanel, BoxLayout.X_AXIS);
+		FlowLayout dbLayout = new FlowLayout(FlowLayout.TRAILING);
 		dialogButtonsPanel.setLayout(dbLayout);
-		//dialogButtonsPanel.setAlignmentX(RIGHT_ALIGNMENT);
 
 		// --------------------------------------------------------------------
 
@@ -200,13 +205,13 @@ public class EditPersonDialog extends JDialog implements ActionListener {
 		rgbPanel.add(fatherLabel, c);
 		c.gridx = 1;
 		c.weightx = 1;
-		c.gridwidth = 6;
+		c.gridwidth = 7;
 		rgbPanel.add(fatherNameField, c);
-		c.gridx = 7;
+		c.gridx = 8;
 		c.weightx = 0;
 		c.gridwidth = 1;
 		rgbPanel.add(buttonAddFather, c);
-		c.gridx = 8;
+		c.gridx = 9;
 		c.weightx = 0;
 		c.gridwidth = 1;
 		rgbPanel.add(buttonDelFather, c);
@@ -218,17 +223,17 @@ public class EditPersonDialog extends JDialog implements ActionListener {
 		rgbPanel.add(motherLabel, c);
 		c.gridx = 1;
 		c.weightx = 1;
-		c.gridwidth = 6;
+		c.gridwidth = 7;
 		rgbPanel.add(motherNameField, c);
-		c.gridx = 7;
-		c.weightx = 0;
-		c.gridwidth = 1;
-		rgbPanel.add(buttonAddMother, c);
 		c.gridx = 8;
 		c.weightx = 0;
 		c.gridwidth = 1;
+		rgbPanel.add(buttonAddMother, c);
+		c.gridx = 9;
+		c.weightx = 0;
+		c.gridwidth = 1;
 		rgbPanel.add(buttonDelMother, c);
-		
+
 		dialogButtonsPanel.add(buttonOk);
 		dialogButtonsPanel.add(buttonCancel);
 
@@ -277,7 +282,7 @@ public class EditPersonDialog extends JDialog implements ActionListener {
 			break;
 		case DEL_PIC:
 			System.out.println("del picture");
-			lambda.setPicname("");
+			thePerson.setPicname("");
 			break;
 		case ADD_FATHER:
 			System.out.println("add father");
@@ -285,7 +290,7 @@ public class EditPersonDialog extends JDialog implements ActionListener {
 			break;
 		case DEL_FATHER:
 			System.out.println("del father");
-			lambda.setFatherId(0);
+			thePerson.setFatherId(0);
 			break;
 		case ADD_MOTHER:
 			System.out.println("add mother");
@@ -293,7 +298,7 @@ public class EditPersonDialog extends JDialog implements ActionListener {
 			break;
 		case DEL_MOTHER:
 			System.out.println("del mother");
-			lambda.setMotherId(0);
+			thePerson.setMotherId(0);
 			break;
 		case ADD_CHILD:
 			System.out.println("add child(ren)");
@@ -302,6 +307,13 @@ public class EditPersonDialog extends JDialog implements ActionListener {
 		case DEL_CHILD:
 			System.out.println("del child");
 			// lambda.deleteChildId(123456);
+			break;
+		case OK:
+			this.setVisible(false);
+			break;
+		case CANCEL:
+			thePerson = null;
+			this.setVisible(false);
 			break;
 		}
 
