@@ -60,7 +60,7 @@ public class Csv2Array {
 	}
 
 	public String[] Ln2Array(String line) {
-		Pattern p = Pattern.compile("[^A-Z0-9/# ]", 2);
+		Pattern p = Pattern.compile("[^A-Z0-9/#. ]", 2);
 		String[] Array = p.split(line);
 		if (max_column < Array.length)
 			max_column = Array.length;
