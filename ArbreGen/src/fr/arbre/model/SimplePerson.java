@@ -2,11 +2,14 @@ package fr.arbre.model;
 
 import java.util.List;
 
+/**
+ * Classe qui représente une personne de la famille.
+ */
 @SuppressWarnings("serial")
 public class SimplePerson implements Person {
 	/**
-	 * Les identifiants sont attribués à partir de 1 (personne de qui l'arbre va
-	 * être produit), puis incrémenté à la création de chaque personne
+	 * Les identifiants sont attribués à partir de 1 (personne de qui l'arbre va être produit), puis
+	 * incrémenté à la création de chaque personne
 	 */
 	private static int currentId = 1;
 
@@ -26,9 +29,8 @@ public class SimplePerson implements Person {
 		this("", "", "", Gender.MALE, 0, 0, null, "");
 	}
 
-	public SimplePerson(String name, String firstname, String birthdate,
-			Gender gender, int motherId, int fatherId,
-			List<Integer> childrenId, String picname) {
+	public SimplePerson(String name, String firstname, String birthdate, Gender gender,
+			int motherId, int fatherId, List<Integer> childrenId, String picname) {
 		this.name = name;
 		this.firstname = firstname;
 		this.birthdate = birthdate;
@@ -143,7 +145,8 @@ public class SimplePerson implements Person {
 
 	@Override
 	public String toString() {
-		return "SimplePerson [nom=" + name + ", prenom=" + firstname
-				+ ", genre=" + gender + ", naissance le=" + birthdate + "]";
+		return "SimplePerson[ id:" + id + ", nom:" + name + ", prénom:" + firstname + ", sexe"
+				+ gender + ", id père:" + fatherId + ", id mère:" + motherId + ", né(e) le:"
+				+ birthdate + ", fichier:" + picname + " ]";
 	}
 }
