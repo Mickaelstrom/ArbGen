@@ -2,7 +2,6 @@ package fr.arbre.ihm;
 
 import java.awt.Color;
 import java.awt.Component;
-import java.awt.ComponentOrientation;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Frame;
@@ -23,6 +22,8 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.border.Border;
 
+import fr.arbre.dao.csv.CsvPersonDao;
+import fr.arbre.dao.csv.PersonIdException;
 import fr.arbre.model.SimplePerson;
 
 /**
@@ -51,7 +52,7 @@ public class EditPersonDialog extends JDialog implements ActionListener {
 	 */
 	public static SimplePerson showDialog(Component frameComp) {
 		Frame frame = JOptionPane.getFrameForComponent(frameComp);
-		dialog = new EditPersonDialog(frame, "Créer une personne", new SimplePerson());
+		dialog = new EditPersonDialog(frame, "Créer une personne", null);
 		dialog.setVisible(true);
 		return dialog.getThePerson();
 	}
@@ -89,7 +90,10 @@ public class EditPersonDialog extends JDialog implements ActionListener {
 		super(frame, title, true);
 		this.setIconImage(new ImageIcon("resources/Icons/personne-16.png").getImage());
 		// this.setResizable(false); // TODO ajouter cette option à la fin
-		thePerson = person;
+		if (person == null)
+			thePerson = new SimplePerson();
+		else
+			thePerson = person.clone();
 
 		final int PANEL_HEIGHT = 260; // TODO supprimer quand tout sera ok
 		// PARTIE GAUCHE ------------------------------------------------------
@@ -118,7 +122,7 @@ public class EditPersonDialog extends JDialog implements ActionListener {
 		GridBagLayout rgbLayout = new GridBagLayout();
 		rgbPanel.setLayout(rgbLayout);
 
-		pictureLabel = new JLabel(new ImageIcon("resources/Pictures/sangoku.jpg"));
+		pictureLabel = new JLabel(new ImageIcon("resources/Pictures/vide.jpg"));
 		pictureLabel.setMinimumSize(new Dimension(140, 140));
 		pictureLabel.setPreferredSize(new Dimension(140, 140));
 		Border border = BorderFactory.createLineBorder(Color.black);
@@ -145,7 +149,6 @@ public class EditPersonDialog extends JDialog implements ActionListener {
 		JLabel fatherLabel = new JLabel("Père");
 		fatherNameField = new JTextField(18);
 		fatherNameField.setEditable(false);
-		fatherNameField.setText("Franklin Delano Roosevelt"); // TODO à enlever...
 
 		JButton buttonAddFather = new JButton(new ImageIcon("resources/Icons/ajouter-16.png"));
 		buttonAddFather.setPreferredSize(new Dimension(28, 28));
@@ -254,18 +257,59 @@ public class EditPersonDialog extends JDialog implements ActionListener {
 	}
 
 	/**
-	 * Sert à initialiser les champs en fonction de <i>lambda</i> par exemple si c'est une personne
-	 * à éditer.
+	 * Sert à initialiser les champs en fonction de <i>thePerson</i>, par exemple si c'est une
+	 * personne à éditer.
 	 */
 	private void updateFields() {
 
-		/**
-		 * TODO decommenter
-		 * 
-		 * CsvPersonDao dao = CsvPersonDao.getInstance(); SimplePerson temp = null; try { temp =
-		 * dao.getPerson(lambda.getMotherId()); } catch (PersonIdException e) { e.printStackTrace();
-		 * } motherNameField.setText(temp.getFirstname() + " " + temp.getName());
-		 */
+		CsvPersonDao dao = CsvPersonDao.getInstance();
+		SimplePerson temp = null;
+
+		//
+		//
+
+		if (thePerson.getPicname().isEmpty())
+			pictureLabel.setIcon(new ImageIcon("resources/Pictures/vide.jpg"));
+		else
+			pictureLabel.setIcon(new ImageIcon("resources/Pictures/" + thePerson.getPicname()));
+
+		if (thePerson.getFatherId() > 0) {
+			try {
+				temp = dao.getPerson(thePerson.getFatherId());
+			} catch (PersonIdException e) {
+				e.printStackTrace();
+				temp = null;
+			}
+			if (temp != null) {
+				if (temp.getFirstname().isEmpty())
+					fatherNameField.setText(temp.getName());
+				else
+					fatherNameField.setText(temp.getFirstname() + " " + temp.getName());
+			} else {
+				fatherNameField.setText("");
+			}
+		} else {
+			fatherNameField.setText("");
+		}
+
+		if (thePerson.getMotherId() > 0) {
+			try {
+				temp = dao.getPerson(thePerson.getMotherId());
+			} catch (PersonIdException e) {
+				e.printStackTrace();
+				temp = null;
+			}
+			if (temp != null) {
+				if (temp.getFirstname().isEmpty())
+					motherNameField.setText(temp.getName());
+				else
+					motherNameField.setText(temp.getFirstname() + " " + temp.getName());
+			} else {
+				motherNameField.setText("");
+			}
+		} else {
+			motherNameField.setText("");
+		}
 	}
 
 	@Override
@@ -278,7 +322,7 @@ public class EditPersonDialog extends JDialog implements ActionListener {
 		switch (arg0.getActionCommand()) {
 		case ADD_PIC:
 			System.out.println("add picture");
-			// lambda.setPicname("azeaeaeaze");
+			// FIXME lambda.setPicname("azeaeaeaze");
 			break;
 		case DEL_PIC:
 			System.out.println("del picture");
@@ -286,7 +330,7 @@ public class EditPersonDialog extends JDialog implements ActionListener {
 			break;
 		case ADD_FATHER:
 			System.out.println("add father");
-			// lambda.setFatherId(123456);
+			// FIXME lambda.setFatherId(123456);
 			break;
 		case DEL_FATHER:
 			System.out.println("del father");
@@ -294,7 +338,7 @@ public class EditPersonDialog extends JDialog implements ActionListener {
 			break;
 		case ADD_MOTHER:
 			System.out.println("add mother");
-			// lambda.setMotherId(123456);
+			// FIXME lambda.setMotherId(123456);
 			break;
 		case DEL_MOTHER:
 			System.out.println("del mother");
@@ -302,19 +346,17 @@ public class EditPersonDialog extends JDialog implements ActionListener {
 			break;
 		case ADD_CHILD:
 			System.out.println("add child(ren)");
-			// lambda.addChildId(123456);
+			// FIXME lambda.addChildId(123456);
 			break;
 		case DEL_CHILD:
 			System.out.println("del child");
-			// lambda.deleteChildId(123456);
-			break;
-		case OK:
-			this.setVisible(false);
+			// FIXME lambda.deleteChildId(123456);
 			break;
 		case CANCEL:
-			thePerson = null;
+			thePerson = null; // pas de break!! (pour passer dans le case OK direct)
+		case OK:
 			this.setVisible(false);
-			break;
+			return;
 		}
 
 		updateFields();
