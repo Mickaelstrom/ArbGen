@@ -12,25 +12,31 @@ public class CsvPersonDao {
 	private static CsvPersonDao instance = new CsvPersonDao();
 	protected File file;
 	protected List<SimplePerson> persons;
+	protected String[][] tab;
 
 	private CsvPersonDao() {
-
 	}
 
 	public static CsvPersonDao getInstance() {
 		return instance;
 	}
 
+	public String[][] getTable() {
+		return tab;
+	}
+
 	public void load(String filename) {
 		Csv2Array data = new Csv2Array(filename);
-		String[][] tab = data.toArray();
+		tab = data.toArray();
 		persons = new ArrayList<SimplePerson>();
 
 		for (int row = 1, size = tab.length; row < size; row++) {
 			SimplePerson person = new SimplePerson();
 
-			// TODO position des colonnes ??? 
-			// -> pris par rapport au "resources/CSV/gen-04.csv"
+			/**
+			 * index 0 : id 1 : nom 2 : prénom 3 : genre 4 : id du père 5 : id de la mère 6 : date
+			 * de naissance 7 : nom du fichier de la photo
+			 */
 			person.setId(Integer.parseInt(tab[row][0]));
 			person.setFirstname(tab[row][1]);
 			person.setName(tab[row][2]);
@@ -58,39 +64,60 @@ public class CsvPersonDao {
 				person.setBirthdate(tab[row][6]);
 			}
 
+			if (tab[row].length > 7) {
+				person.setPicname(tab[row][7]);
+			}
+
 			persons.add(person);
 		}
 	}
-	
-	public void print(){
-		for(SimplePerson person : persons){
+
+	public void print() {
+		for (SimplePerson person : persons) {
 			System.out.println(person.toString());
 		}
 	}
-	
+
 	/**
 	 * Récupère une personne en fonction de l'id passé
-	 * @param id identifiant de la personne à chercher
+	 * 
+	 * @param id
+	 *            identifiant de la personne à chercher
 	 * @return
 	 */
 	public SimplePerson getPerson(int id) throws PersonIdException {
-		if(id < 1) // 1 personne la plus basse
+		if (id < 1) // 1 personne la plus basse
 			throw new PersonIdException("Valeur de l'index de la personne incorrect");
-		
+
 		SimplePerson returnPerson = null;
 
-		for(SimplePerson person : persons){
-			if(person.getId() == id)
-			{
+		for (SimplePerson person : persons) {
+			if (person.getId() == id) {
 				returnPerson = person;
 				break;
 			}
 		}
-	
-		if(returnPerson == null)
+
+		if (returnPerson == null)
 			throw new PersonIdException("Personne non trouvée");
-		
+
 		return returnPerson;
+	}
+
+	public List<SimplePerson> getTableByGender(Gender filter) throws GenderException {
+		if (filter != Gender.MALE && filter != Gender.FEMALE)
+			throw new GenderException("Le genre est incorrect");
+
+		List<SimplePerson> list = new ArrayList<SimplePerson>();
+
+		for (SimplePerson person : persons) {
+
+			if (person.getGender() == filter) {
+				list.add(person);
+			}
+		}
+
+		return list;
 	}
 
 }
