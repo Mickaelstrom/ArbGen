@@ -15,29 +15,27 @@ public class SimplePerson implements Person {
 
 	// ------------------------------------------------------------------------
 
+	private int id;
 	private String name;
 	private String firstname;
 	private String birthdate;
 	private Gender gender;
-	private int id;
 	private int motherId;
 	private int fatherId;
-	private List<Integer> childrenId;
 	private String picname;
 
 	public SimplePerson() {
-		this("", "", "", Gender.MALE, 0, 0, null, "");
+		this("", "", "", Gender.MALE, 0, 0, "");
 	}
 
 	public SimplePerson(String name, String firstname, String birthdate, Gender gender,
-			int motherId, int fatherId, List<Integer> childrenId, String picname) {
+			int motherId, int fatherId, String picname) {
 		this.name = name;
 		this.firstname = firstname;
 		this.birthdate = birthdate;
 		this.gender = gender;
 		this.motherId = motherId;
 		this.fatherId = fatherId;
-		this.childrenId = childrenId;
 		this.picname = picname;
 
 		id = generateId();
@@ -84,11 +82,6 @@ public class SimplePerson implements Person {
 		return this.fatherId;
 	}
 
-	@Override
-	public List<Integer> getChildrenId() {
-		return this.childrenId;
-	}
-
 	// Setters ----------------------------------------------------------------
 
 	@Override
@@ -122,11 +115,6 @@ public class SimplePerson implements Person {
 	}
 
 	@Override
-	public void setChildrenId(List<Integer> childrenId) {
-		this.childrenId = childrenId;
-	}
-
-	@Override
 	public void setPicname(String picname) {
 		this.picname = picname;
 	}
@@ -145,8 +133,23 @@ public class SimplePerson implements Person {
 
 	@Override
 	public String toString() {
-		return "SimplePerson[ id:" + id + ", nom:" + name + ", prénom:" + firstname + ", sexe"
+		return "SimplePerson[ id:" + id + ", nom:" + name + ", prénom:" + firstname + ", genre:"
 				+ gender + ", id père:" + fatherId + ", id mère:" + motherId + ", né(e) le:"
 				+ birthdate + ", fichier:" + picname + " ]";
+	}
+
+	@Override
+	public SimplePerson clone() {
+		SimplePerson copy = new SimplePerson();
+		copy.setId(id);
+		copy.setName(name);
+		copy.setFirstname(firstname);
+		copy.setGender(gender);
+		copy.setFatherId(fatherId);
+		copy.setMotherId(motherId);
+		copy.setBirthdate(birthdate);
+		copy.setPicname(picname);
+
+		return copy;
 	}
 }
