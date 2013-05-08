@@ -10,6 +10,8 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.UIManager;
 
+import fr.arbre.dao.csv.CsvPersonDao;
+import fr.arbre.dao.csv.PersonIdException;
 import fr.arbre.ihm.EditPersonDialog;
 import fr.arbre.model.Gender;
 import fr.arbre.model.SimplePerson;
@@ -45,9 +47,20 @@ public class EditPersonDialogTest {
 		JPanel panel = new JPanel();
 		final JButton b1 = new JButton("Créer personne");
 		final JButton b2 = new JButton("Editer personne");
-		p1 = null;
-		p2 = new SimplePerson("nom", "prenom", "12/12/2012", Gender.FEMALE, 0, 0, null, "");
+		
 
+		CsvPersonDao dao = CsvPersonDao.getInstance();
+		dao.load("resources/CSV/gen-dbz.csv");
+
+		p1 = null;
+		try {
+			p2 = dao.getPerson(5);
+		} catch (PersonIdException e1) {
+			e1.printStackTrace();
+		}
+
+		System.out.println(p2);
+		
 		b1.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
