@@ -3,6 +3,8 @@ package fr.arbre.ihm;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -11,7 +13,13 @@ import javax.swing.ToolTipManager;
 
 @SuppressWarnings("serial")
 public class Panel_AffichageArbre extends JPanel {
-	private TreeDrawPanel	tree;
+	private TreeDrawPanel tree;
+
+	// Actions
+	private newMember_Action newMember_Action = new newMember_Action();
+	private displayMemberTable_Action displayMemberTable_Action = new displayMemberTable_Action();
+	private saveImg_Action saveImg_Action = new saveImg_Action();
+	private veriffErrors_Action veriffErrors_Action = new veriffErrors_Action();
 
 	public Panel_AffichageArbre() {
 
@@ -35,7 +43,7 @@ public class Panel_AffichageArbre extends JPanel {
 		newMember.setToolTipText("Ajouter un membre");
 
 		JButton displayMemberTable = new JButton(new ImageIcon(
-				"../ArbreGen/resources/Icons/table-48.png"));
+				"../ArbreGen/resources/Icons/table-32.png"));
 		displayMemberTable.setToolTipText("Afficher la table des membres");
 
 		JButton saveImg = new JButton(new ImageIcon(
@@ -56,6 +64,53 @@ public class Panel_AffichageArbre extends JPanel {
 		this.add(tree, BorderLayout.CENTER);
 		this.add(menu, BorderLayout.WEST);
 
+		// Lien des action listener aux boutons
+		newMember.addActionListener(newMember_Action);
+		displayMemberTable.addActionListener(displayMemberTable_Action);
+		saveImg.addActionListener(saveImg_Action);
+		veriffErrors.addActionListener(veriffErrors_Action);
+
+	}
+
+	// //////////////////
+	// ActionListener //
+	// //////////////////
+
+	class newMember_Action implements ActionListener {
+		public void actionPerformed(ActionEvent arg0) {
+
+			// Ouverture fenetre nouveau membre
+			System.out.println("NewMember.");
+
+		}
+	}
+
+	class displayMemberTable_Action implements ActionListener {
+		public void actionPerformed(ActionEvent arg0) {
+
+			// Ouverture fenetre tableau
+			System.out.println("displayMemberTable.");
+			Tableau popup = new Tableau(null, "Afficher une table", true);
+
+		}
+	}
+
+	class saveImg_Action implements ActionListener {
+		public void actionPerformed(ActionEvent arg0) {
+
+			// Sauvegarde de l'image
+			System.out.println("saveImg.");
+
+		}
+	}
+
+	class veriffErrors_Action implements ActionListener {
+		public void actionPerformed(ActionEvent arg0) {
+
+			// Sauvegarde de l'image
+			System.out.println("veriffErrors.");
+
+		}
 	}
 
 }
