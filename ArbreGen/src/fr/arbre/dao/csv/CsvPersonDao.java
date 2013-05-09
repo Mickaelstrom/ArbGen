@@ -2,7 +2,9 @@ package fr.arbre.dao.csv;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import fr.arbre.model.Gender;
 import fr.arbre.model.SimplePerson;
@@ -16,8 +18,12 @@ public class CsvPersonDao {
 	private static CsvPersonDao instance = new CsvPersonDao();
 	protected File file;
 	protected List<SimplePerson> persons;
+	private Map<Integer, Integer> mapLinksId; // clé id de la personne, valeur sa position dans la
+												// liste persons
 	protected String[][] table;
 	protected String[] header;
+	private int nbGeneration;
+	private int nbMaxPerGen;
 
 	private CsvPersonDao() {
 	}
@@ -57,9 +63,10 @@ public class CsvPersonDao {
 					table[i][j] = "";
 			}
 		}
-		
+
 		persons = new ArrayList<SimplePerson>();
-		for (int row = 1, size = table.length; row < size; row++) {
+		mapLinksId = new HashMap<Integer, Integer>();
+		for (int row = 0, size = table.length; row < size; row++) {
 			SimplePerson person = new SimplePerson();
 
 			/*
@@ -76,7 +83,10 @@ public class CsvPersonDao {
 			person.setPicname(table[row][7]);
 
 			persons.add(person);
+			mapLinksId.put(person.getId(), row);
 		}
+
+		calculateTreeInfos();
 	}
 
 	/**
@@ -98,7 +108,7 @@ public class CsvPersonDao {
 	 *             si l'id est incorrect ou si la personne n'a pas été trouvé.
 	 */
 	public SimplePerson getPerson(int id) throws PersonIdException {
-		if (id < 0) // 0:personne sans information, >=1:départ des autres personnes
+		if (id < 0) // 0: personne vide, >=1: les personnes
 			throw new PersonIdException("Valeur de l'index de la personne incorrect");
 
 		SimplePerson returnPerson = null;
@@ -148,4 +158,59 @@ public class CsvPersonDao {
 		return header;
 	}
 
+	/**
+	 * Calculer le nombre max de personne sur la meme ligne et le nombre de generation.<br/>
+	 * <p>
+	 * <b>Note : </b>Utile pour définir la taille de l'image du treedrawpanel.
+	 * </p>
+	 */
+	private void calculateTreeInfos() {
+		nbGeneration = 0;
+		nbMaxPerGen = 0;
+		if (persons.size() == 0)
+			return;
+
+		// FIXME corriger l'algo pour goDown
+		nbGeneration = goUp(persons.get(mapLinksId.get(5)), 1);
+		System.out.println(nbGeneration);
+		goDown(persons.get(mapLinksId.get(7)), 1);
+	}
+
+	/**
+	 * Nombre de génération au dessus + actuelle
+	 * 
+	 * @param pers
+	 *            La personne d'où il faut partir
+	 * @param nbGen
+	 *            Le nombre de génération actuelle
+	 * @return Le nombre de génération compté vers le haut
+	 */
+	private int goUp(SimplePerson pers, int nbGen) {
+		int height1 = nbGen;
+		int height2 = nbGen;
+
+		// récursivité powaaaa!!!
+		if (pers.getFatherId() > 0) {
+			height1 = goUp(persons.get(mapLinksId.get(pers.getFatherId())), nbGen + 1);
+		}
+		if (pers.getMotherId() > 0) {
+			height2 = goUp(persons.get(mapLinksId.get(pers.getMotherId())), nbGen + 1);
+		}
+
+		return ((height1 > height2) ? height1 : height2);
+	}
+
+	/**
+	 * Nombre de generation en dessous + actuelle
+	 * 
+	 * @param pers
+	 *            La personne d'où il faut partir
+	 * @param nbGen
+	 *            Le nombre de génération actuelle
+	 * @return Le nombre de génération compté vers le haut
+	 */
+	private void goDown(SimplePerson pers, int nbGen) {
+		// hou la cata...
+		// FIXME SimplePerson contient la liste des id des enfants serait mieux ??
+	}
 }
