@@ -23,13 +23,14 @@ public class SimplePerson implements Person {
 	private int motherId;
 	private int fatherId;
 	private String picname;
+	private List<Integer> childrenId;
 
 	public SimplePerson() {
-		this("", "", "", Gender.MALE, 0, 0, "");
+		this("", "", "", Gender.MALE, 0, 0, "", null);
 	}
 
 	public SimplePerson(String name, String firstname, String birthdate, Gender gender,
-			int motherId, int fatherId, String picname) {
+			int motherId, int fatherId, String picname, List<Integer> childrenId) {
 		this.name = name;
 		this.firstname = firstname;
 		this.birthdate = birthdate;
@@ -37,6 +38,7 @@ public class SimplePerson implements Person {
 		this.motherId = motherId;
 		this.fatherId = fatherId;
 		this.picname = picname;
+		this.childrenId = childrenId;
 
 		id = generateId();
 	}
@@ -82,6 +84,11 @@ public class SimplePerson implements Person {
 		return this.fatherId;
 	}
 
+	@Override
+	public List<Integer> getChildrenId() {
+		return childrenId;
+	}
+
 	// Setters ----------------------------------------------------------------
 
 	@Override
@@ -119,6 +126,11 @@ public class SimplePerson implements Person {
 		this.picname = picname;
 	}
 
+	@Override
+	public void setChildrenId(List<Integer> childrenId) {
+		this.childrenId = childrenId;
+	}
+
 	// Other functions --------------------------------------------------------
 
 	@Override
@@ -129,6 +141,11 @@ public class SimplePerson implements Person {
 	@Override
 	public void setId(int id) {
 		this.id = id;
+	}
+
+	@Override
+	public void addChildId(int childId) {
+		childrenId.add(childId);
 	}
 
 	@Override

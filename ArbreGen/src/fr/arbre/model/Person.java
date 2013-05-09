@@ -1,6 +1,7 @@
 package fr.arbre.model;
 
 import java.io.Serializable;
+import java.util.List;
 
 public interface Person extends Serializable {
 
@@ -19,6 +20,8 @@ public interface Person extends Serializable {
 
 	int getFatherId();
 
+	List<Integer> getChildrenId();
+
 	String getPicname();
 
 	// Setters ----------------------------------------------------------------
@@ -36,5 +39,9 @@ public interface Person extends Serializable {
 
 	void setFatherId(int fid);
 
+	void setChildrenId(List<Integer> childrenId);
+
 	void setPicname(String picname);
+
+	void addChildId(int childId);
 }
