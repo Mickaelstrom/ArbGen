@@ -44,4 +44,6 @@ public interface Person extends Serializable {
 	void setPicname(String picname);
 
 	void addChildId(int childId);
+	
+	void eraseChildId(int childId);
 }

@@ -1,5 +1,7 @@
 package fr.arbre.model;
 
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -26,7 +28,7 @@ public class SimplePerson implements Person {
 	private List<Integer> childrenId;
 
 	public SimplePerson() {
-		this("", "", "", Gender.MALE, 0, 0, "", null);
+		this("", "", "", Gender.MALE, 0, 0, "", new ArrayList<Integer>());
 	}
 
 	public SimplePerson(String name, String firstname, String birthdate, Gender gender,
@@ -146,6 +148,11 @@ public class SimplePerson implements Person {
 	@Override
 	public void addChildId(int childId) {
 		childrenId.add(childId);
+	}
+
+	@Override
+	public void eraseChildId(int childId) {
+		childrenId.remove((Object) childId);
 	}
 
 	@Override
