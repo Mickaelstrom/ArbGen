@@ -10,37 +10,48 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import javax.swing.BorderFactory;
+import javax.swing.Box;
 import javax.swing.BoxLayout;
+import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JDialog;
+import javax.swing.JFormattedTextField;
 import javax.swing.JLabel;
+import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JRadioButton;
+import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.border.Border;
+import javax.swing.text.DateFormatter;
 
 import fr.arbre.dao.csv.CsvPersonDao;
 import fr.arbre.dao.csv.PersonIdException;
+import fr.arbre.model.Gender;
 import fr.arbre.model.SimplePerson;
 
 /**
- * Classe qui permet d'afficher une fenetre de création/édition d'une personne
+ * Classe qui permet d'afficher une fenêtre de création/édition d'une personne
  * 
- * Une fenetre peut etre appelé en statique par showDialog
+ * Une fenêtre peut etre appelé en statique par showDialog
  */
 @SuppressWarnings("serial")
 public class EditPersonDialog extends JDialog implements ActionListener {
 
 	private final String ADD_PIC = "add pic", DEL_PIC = "del pic", ADD_FATHER = "add father",
 			DEL_FATHER = "del father", ADD_MOTHER = "add mother", DEL_MOTHER = "del mother",
-			ADD_CHILD = "add child", DEL_CHILD = "del child", OK = "ok", CANCEL = "cancel";
+			ADD_CHILD = "add child", DEL_CHILD = "del child", CANCEL = "cancel";
 
 	// -----------------------------------------------------------------
 
-	private static EditPersonDialog dialog; // la fenetre
+	// private static EditPersonDialog dialog; // la fenetre
 	private SimplePerson thePerson; // la personne édité/crée
 
 	/**
@@ -52,7 +63,7 @@ public class EditPersonDialog extends JDialog implements ActionListener {
 	 */
 	public static SimplePerson showDialog(Component frameComp) {
 		Frame frame = JOptionPane.getFrameForComponent(frameComp);
-		dialog = new EditPersonDialog(frame, "Créer une personne", null);
+		EditPersonDialog dialog = new EditPersonDialog(frame, "Créer une personne", null);
 		dialog.setVisible(true);
 		return dialog.getThePerson();
 	}
@@ -66,7 +77,7 @@ public class EditPersonDialog extends JDialog implements ActionListener {
 	 */
 	public static SimplePerson showDialog(Component frameComp, SimplePerson person) {
 		Frame frame = JOptionPane.getFrameForComponent(frameComp);
-		dialog = new EditPersonDialog(frame, "Editer une personne", person);
+		EditPersonDialog dialog = new EditPersonDialog(frame, "Editer une personne", person);
 		dialog.setVisible(true);
 		return dialog.getThePerson();
 	}
@@ -86,6 +97,9 @@ public class EditPersonDialog extends JDialog implements ActionListener {
 	private JTextField fatherNameField;
 	private JTextField motherNameField;
 
+	ButtonGroup radioGroup;
+	public static JScrollPane scrollpane = new JScrollPane();
+
 	private EditPersonDialog(Frame frame, String title, SimplePerson person) {
 		super(frame, title, true);
 		this.setIconImage(new ImageIcon("resources/Icons/personne-16.png").getImage());
@@ -95,13 +109,8 @@ public class EditPersonDialog extends JDialog implements ActionListener {
 		else
 			thePerson = person.clone();
 
-		final int PANEL_HEIGHT = 260; // TODO supprimer quand tout sera ok
 		// PARTIE GAUCHE ------------------------------------------------------
 		JPanel leftPanel = new JPanel();
-		leftPanel.setMinimumSize(new Dimension(200, PANEL_HEIGHT)); // TODO supprimer quand tout
-																	// sera ok
-		leftPanel.setPreferredSize(new Dimension(200, PANEL_HEIGHT)); // TODO supprimer quand tout
-																		// sera ok
 
 		BoxLayout leftLayout = new BoxLayout(leftPanel, BoxLayout.Y_AXIS);
 		leftPanel.setLayout(leftLayout);
@@ -110,7 +119,157 @@ public class EditPersonDialog extends JDialog implements ActionListener {
 		GridBagLayout lgbLayout = new GridBagLayout();
 		lgbPanel.setLayout(lgbLayout);
 
-		// TODO mettre le contenu de la fenetre gauche ici
+		// Name
+		final JTextField nameField = new JTextField();
+		nameField.setPreferredSize(new Dimension(200, 20));
+		JLabel nameLabel = new JLabel("Nom ");
+
+		// Fisrt Name
+		final JTextField firstNameField = new JTextField();
+		firstNameField.setPreferredSize(new Dimension(200, 20));
+		JLabel firstNameLabel = new JLabel("Prénom ");
+
+		// Gender
+		JLabel genderLabel = new JLabel("Genre ");
+		JPanel panGender = new JPanel();
+
+		ButtonGroup radioGroup = new ButtonGroup();
+		final JRadioButton maleButton;
+		radioGroup.add(maleButton = new JRadioButton("Homme"));
+		panGender.add(maleButton);
+		panGender.add(Box.createVerticalStrut(30));
+		final JRadioButton femaleButton;
+		radioGroup.add(femaleButton = new JRadioButton("Femme"));
+		panGender.add(femaleButton);
+
+		// Birthdate
+		JLabel birthDateLabel = new JLabel("Né(e) le ");
+
+		DateFormat formatBirth = new SimpleDateFormat("dd/MM/yyyy");
+		DateFormatter db = new DateFormatter(formatBirth);
+		final JFormattedTextField dateFieldBirth = new JFormattedTextField(db);
+		dateFieldBirth.setPreferredSize(new Dimension(20, 20));
+		dateFieldBirth.setValue(new Date());
+
+		// Date of death
+		/*
+		 * JLabel dateDeathLabel = new JLabel("Parti(e) le ");
+		 * 
+		 * DateFormat formatDeath = new SimpleDateFormat("dd/MM/yyyy"); DateFormatter df = new
+		 * DateFormatter(formatDeath); final JFormattedTextField dateFieldDeath = new
+		 * JFormattedTextField(df); dateFieldDeath.setPreferredSize(new Dimension(20, 20));
+		 * dateFieldDeath.setValue(new Date());
+		 */
+
+		// Enfant à modifier plus tard
+
+		JLabel childLabel = new JLabel("Enfant(s) ");
+		String child[] = { "Household", "Office", "Extended Family", "Company (US)",
+				"Company (World)", "Team", "Will", "Birthday Card List", "High School", "Country",
+				"Continent", "Planet" };
+		final JList<String> listChild = new JList<String>(child);
+
+		listChild.setVisibleRowCount(4);
+		scrollpane = new JScrollPane(listChild);
+
+		JButton buttonAddChild = new JButton(new ImageIcon("resources/Icons/ajouter-16.png"));
+		buttonAddChild.setPreferredSize(new Dimension(28, 28));
+		buttonAddChild.setMaximumSize(new Dimension(28, 28));
+		buttonAddChild.setActionCommand(ADD_CHILD);
+		buttonAddChild.addActionListener(this);
+
+		JButton buttonDelChild = new JButton(new ImageIcon("resources/Icons/supprimer-16.png"));
+		buttonDelChild.setPreferredSize(new Dimension(28, 28));
+		buttonDelChild.setMaximumSize(new Dimension(28, 28));
+		buttonDelChild.setActionCommand(DEL_CHILD);
+		buttonDelChild.addActionListener(this);
+
+		Box vertiE = Box.createVerticalBox();
+		vertiE.add(buttonAddChild);
+		vertiE.add(Box.createVerticalStrut(20));
+		vertiE.add(buttonDelChild);
+
+		JPanel panChild = new JPanel();
+		panChild.add(vertiE);
+
+		// --------------------------------------------------------------------
+		GridBagConstraints g = new GridBagConstraints();
+		g.fill = GridBagConstraints.HORIZONTAL;
+		g.insets = new Insets(5, 5, 5, 5);
+
+		g.gridy = 0;
+		g.gridx = 0;
+		g.weightx = 0;
+		g.gridwidth = 1;
+		lgbPanel.add(nameLabel, g);
+
+		g.gridy = 0;
+		g.gridx = 1;
+		g.weightx = 0;
+		g.gridwidth = 7;
+		lgbPanel.add(nameField, g);
+
+		g.gridy = 1;
+		g.gridx = 0;
+		g.weightx = 0;
+		g.gridwidth = 1;
+		lgbPanel.add(firstNameLabel, g);
+
+		g.gridy = 1;
+		g.gridx = 1;
+		g.weightx = 0;
+		g.gridwidth = 7;
+		lgbPanel.add(firstNameField, g);
+
+		g.gridy = 2;
+		g.gridx = 0;
+		g.weightx = 0;
+		g.gridwidth = 1;
+		lgbPanel.add(genderLabel, g);
+
+		g.gridy = 2;
+		g.gridx = 2;
+		g.weightx = 0;
+		g.gridwidth = 6;
+		lgbPanel.add(panGender, g);
+
+		g.gridy = 3;
+		g.gridx = 0;
+		g.weightx = 0;
+		g.gridwidth = 1;
+		lgbPanel.add(birthDateLabel, g);
+
+		g.gridy = 3;
+		g.gridx = 2;
+		g.weightx = 0;
+		g.gridwidth = 6;
+		lgbPanel.add(dateFieldBirth, g);
+
+		/*
+		 * g.gridy = 4; g.gridx = 0; g.weightx = 0; g.gridwidth = 1; lgbPanel.add(dateDeathLabel,
+		 * g);
+		 * 
+		 * g.gridy = 4; g.gridx = 2; g.weightx = 0; g.gridwidth = 6; lgbPanel.add(dateFieldDeath,
+		 * g);
+		 */
+
+		g.gridy = 4;// 5;
+		g.gridx = 0;
+		g.weightx = 0;
+		g.gridwidth = 1;
+		lgbPanel.add(childLabel, g);
+
+		g.gridy = 4;// 5;
+		g.gridx = 2;
+		g.weightx = 0;
+		g.gridwidth = 6;
+		lgbPanel.add(scrollpane, g);
+
+		g.gridy = 4;// 5;
+		g.gridx = 8;
+		g.weightx = 0;
+		g.gridwidth = 1;
+		lgbPanel.add(panChild, g);
 
 		// PARTIE DROITE ------------------------------------------------------
 		JPanel rightPanel = new JPanel();
@@ -135,7 +294,7 @@ public class EditPersonDialog extends JDialog implements ActionListener {
 		buttonAddPic.setActionCommand(ADD_PIC);
 		buttonAddPic.addActionListener(this);
 
-		JButton buttonDelPic = new JButton(new ImageIcon("resources/Icons/retirer-16.png"));
+		JButton buttonDelPic = new JButton(new ImageIcon("resources/Icons/supprimer-16.png"));
 		buttonDelPic.setPreferredSize(new Dimension(28, 28));
 		buttonDelPic.setMaximumSize(new Dimension(28, 28));
 		buttonDelPic.setActionCommand(DEL_PIC);
@@ -156,7 +315,7 @@ public class EditPersonDialog extends JDialog implements ActionListener {
 		buttonAddFather.setActionCommand(ADD_FATHER);
 		buttonAddFather.addActionListener(this);
 
-		JButton buttonDelFather = new JButton(new ImageIcon("resources/Icons/retirer-16.png"));
+		JButton buttonDelFather = new JButton(new ImageIcon("resources/Icons/supprimer-16.png"));
 		buttonDelFather.setPreferredSize(new Dimension(28, 28));
 		buttonDelFather.setMaximumSize(new Dimension(28, 28));
 		buttonDelFather.setActionCommand(DEL_FATHER);
@@ -172,15 +331,51 @@ public class EditPersonDialog extends JDialog implements ActionListener {
 		buttonAddMother.setActionCommand(ADD_MOTHER);
 		buttonAddMother.addActionListener(this);
 
-		JButton buttonDelMother = new JButton(new ImageIcon("resources/Icons/retirer-16.png"));
+		JButton buttonDelMother = new JButton(new ImageIcon("resources/Icons/supprimer-16.png"));
 		buttonDelMother.setPreferredSize(new Dimension(28, 28));
 		buttonDelMother.setMaximumSize(new Dimension(28, 28));
 		buttonDelMother.setActionCommand(DEL_MOTHER);
 		buttonDelMother.addActionListener(this);
 
 		JButton buttonOk = new JButton("Ok");
-		buttonOk.setActionCommand(OK);
-		buttonOk.addActionListener(this);
+		buttonOk.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				String nameFieldText = nameField.getText();
+				System.out.println(nameFieldText);
+				thePerson.setName(nameFieldText);
+
+				String firstNameFieldText = firstNameField.getText();
+				System.out.println(firstNameFieldText);
+				thePerson.setFirstname(firstNameFieldText);
+
+				String genderText;
+				genderText = femaleButton.isSelected() ? femaleButton.getText() : maleButton
+						.isSelected() ? maleButton.getText() : "non determine";
+				System.out.println(genderText);
+				Gender genderTextField = null;
+				if (genderText == "Homme") {
+					genderTextField = fr.arbre.model.Gender.MALE;
+				}
+				if (genderText == "Femme") {
+					genderTextField = fr.arbre.model.Gender.FEMALE;
+				}
+				thePerson.setGender(genderTextField);
+
+				String birthDateText = dateFieldBirth.getText();
+				System.out.println(birthDateText);
+				thePerson.setBirthdate(birthDateText);
+
+				/*
+				 * String deathDateText = dateFieldDeath.getText();
+				 * System.out.println(deathDateText); thePerson.setBirthdate(deathDateText);
+				 */
+
+				String childText = (String) listChild.getSelectedValue();
+				System.out.println(childText);
+
+				setVisible(false);
+			}
+		});
 
 		JButton buttonCancel = new JButton("Annuler");
 		buttonCancel.setActionCommand(CANCEL);
@@ -191,8 +386,6 @@ public class EditPersonDialog extends JDialog implements ActionListener {
 		dialogButtonsPanel.setLayout(dbLayout);
 
 		// --------------------------------------------------------------------
-
-		// leftPanel.add(lgbPanel);
 
 		picButtonsPanel.add(buttonAddPic);
 		picButtonsPanel.add(buttonDelPic);
@@ -240,6 +433,8 @@ public class EditPersonDialog extends JDialog implements ActionListener {
 		dialogButtonsPanel.add(buttonOk);
 		dialogButtonsPanel.add(buttonCancel);
 
+		leftPanel.add(lgbPanel);
+
 		rightPanel.add(pictureLabel);
 		rightPanel.add(picButtonsPanel);
 		rightPanel.add(rgbPanel);
@@ -257,16 +452,17 @@ public class EditPersonDialog extends JDialog implements ActionListener {
 	}
 
 	/**
-	 * Sert à initialiser les champs en fonction de <i>thePerson</i>, par exemple si c'est une
-	 * personne à éditer.
+	 * Sert à initialiser (et rafraichir) les champs en fonction de <i>thePerson</i>, par exemple si
+	 * c'est une personne à éditer.
 	 */
 	private void updateFields() {
 
 		CsvPersonDao dao = CsvPersonDao.getInstance();
 		SimplePerson temp = null;
 
-		//
-		//
+		/*
+		 * TODO ajouter l'initialisation du composant liste des enfants (c'est pour quand on édite)
+		 */
 
 		if (thePerson.getPicname().isEmpty())
 			pictureLabel.setIcon(new ImageIcon("resources/Pictures/vide.jpg"));
@@ -353,8 +549,7 @@ public class EditPersonDialog extends JDialog implements ActionListener {
 			// FIXME lambda.deleteChildId(123456);
 			break;
 		case CANCEL:
-			thePerson = null; // pas de break!! (pour passer dans le case OK direct)
-		case OK:
+			thePerson = null;
 			this.setVisible(false);
 			return;
 		}
