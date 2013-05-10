@@ -1,35 +1,79 @@
 package fr.arbre.ihm;
 
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.Frame;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 
 @SuppressWarnings("serial")
 public class Tableau extends JDialog {
 
-	public Tableau(JFrame parent, String title, boolean modal) {
-		// On appelle le construteur de JDialog correspondant
-		super(parent, title, modal);
+	public Tableau(Frame frame, String title, boolean selectON) {
+		super(frame, title, true);
 
-		Panel_Csv2Array tableau = new Panel_Csv2Array();
+		// TODO implémenter un jfilechooser pour selectionner quel csv afficher
 
-		// On spécifie une taille
-		this.setSize(200, 80);
+		final Table_Csv2Array tableau = new Table_Csv2Array("resources/CSV/gen-dbz.csv");
+		JScrollPane scrollPane = new JScrollPane(tableau);
+		scrollPane.setPreferredSize(new Dimension(700, 300));
 
-		// La position
-		this.setLocationRelativeTo(null);
-		this.setModal(false);
+		setLayout(new BorderLayout());
 
-		this.add(tableau);
-		// this.add(new JLabel("hello"));
+		add(scrollPane, BorderLayout.CENTER);
+		if (selectON) {
+			id = 0;
+			JButton buttonOk = new JButton("Ok");
+			buttonOk.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent arg0) {
+					id = tableau.getSelectedId();
+					setVisible(false);
+				}
+			});
+			JButton buttonCancel = new JButton("Annuler");
+			buttonCancel.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent arg0) {
+					id = 0;
+					setVisible(false);
+				}
+			});
 
-		// La boîte ne devra pas être redimensionnable
-		this.setResizable(false);
+			JPanel pan = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+			pan.add(buttonOk, BorderLayout.SOUTH);
+			pan.add(buttonCancel, BorderLayout.SOUTH);
+			add(pan, BorderLayout.SOUTH);
+		}
 
-		// Enfin on l'affiche
-		this.pack();
+		pack();
+		setLocationRelativeTo(null);
 
-		this.setVisible(true);
-		// Tout ceci ressemble à ce que nous faisons depuis le début avec notre JFrame.
+		setVisible(true);
+	}
+
+	public static int id;
+
+	/**
+	 * Ouvre une fenêtre pour sélectionner une personne dans un tableau.
+	 * 
+	 * @param frame
+	 *            La fenêtre appelante
+	 * @param title
+	 *            Titre de la nouvelle fenêtre
+	 *            <p>
+	 * @return L'identifiant de la personne selectionné <br/>
+	 *         <b>Note :</b> Retourne 0 si annulation
+	 *         </p>
+	 */
+	public static int showPersonSelection(JFrame frame, String title) {
+		new Tableau(frame, title, true);
+		return id;
 	}
 
 }
