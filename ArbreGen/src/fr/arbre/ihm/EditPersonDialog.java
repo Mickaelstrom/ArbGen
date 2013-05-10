@@ -102,22 +102,19 @@ public class EditPersonDialog extends JDialog implements ActionListener {
 
 	private EditPersonDialog(Frame frame, String title, SimplePerson person) {
 		super(frame, title, true);
-		this.setIconImage(new ImageIcon("resources/Icons/personne-16.png").getImage());
-		// this.setResizable(false); // TODO ajouter cette option à la fin
-		if (person == null)
-			thePerson = new SimplePerson();
-		else
-			thePerson = person.clone();
+		setIconImage(new ImageIcon("resources/Icons/personne-16.png").getImage());
+		setResizable(false);
 
+		thePerson = (person == null) ? new SimplePerson() : person.clone();
+
+		final Dimension icoButDim = new Dimension(28, 28);
 		// PARTIE GAUCHE ------------------------------------------------------
 		JPanel leftPanel = new JPanel();
 
 		BoxLayout leftLayout = new BoxLayout(leftPanel, BoxLayout.Y_AXIS);
 		leftPanel.setLayout(leftLayout);
 
-		JPanel lgbPanel = new JPanel();
-		GridBagLayout lgbLayout = new GridBagLayout();
-		lgbPanel.setLayout(lgbLayout);
+		JPanel lgbPanel = new JPanel(new GridBagLayout());
 
 		// Name
 		final JTextField nameField = new JTextField();
@@ -153,7 +150,8 @@ public class EditPersonDialog extends JDialog implements ActionListener {
 
 		// Date of death
 		/*
-		 * JLabel dateDeathLabel = new JLabel("Parti(e) le ");
+		 * FIXME garder ou non ? telle est la question... JLabel dateDeathLabel = new
+		 * JLabel("Parti(e) le ");
 		 * 
 		 * DateFormat formatDeath = new SimpleDateFormat("dd/MM/yyyy"); DateFormatter df = new
 		 * DateFormatter(formatDeath); final JFormattedTextField dateFieldDeath = new
@@ -161,8 +159,7 @@ public class EditPersonDialog extends JDialog implements ActionListener {
 		 * dateFieldDeath.setValue(new Date());
 		 */
 
-		// Enfant à modifier plus tard
-
+		// TODO Enfant à modifier plus tard
 		JLabel childLabel = new JLabel("Enfant(s) ");
 		String child[] = { "Household", "Office", "Extended Family", "Company (US)",
 				"Company (World)", "Team", "Will", "Birthday Card List", "High School", "Country",
@@ -173,14 +170,14 @@ public class EditPersonDialog extends JDialog implements ActionListener {
 		scrollpane = new JScrollPane(listChild);
 
 		JButton buttonAddChild = new JButton(new ImageIcon("resources/Icons/ajouter-16.png"));
-		buttonAddChild.setPreferredSize(new Dimension(28, 28));
-		buttonAddChild.setMaximumSize(new Dimension(28, 28));
+		buttonAddChild.setPreferredSize(icoButDim);
+		buttonAddChild.setMaximumSize(icoButDim);
 		buttonAddChild.setActionCommand(ADD_CHILD);
 		buttonAddChild.addActionListener(this);
 
 		JButton buttonDelChild = new JButton(new ImageIcon("resources/Icons/supprimer-16.png"));
-		buttonDelChild.setPreferredSize(new Dimension(28, 28));
-		buttonDelChild.setMaximumSize(new Dimension(28, 28));
+		buttonDelChild.setPreferredSize(icoButDim);
+		buttonDelChild.setMaximumSize(icoButDim);
 		buttonDelChild.setActionCommand(DEL_CHILD);
 		buttonDelChild.addActionListener(this);
 
@@ -246,8 +243,8 @@ public class EditPersonDialog extends JDialog implements ActionListener {
 		lgbPanel.add(dateFieldBirth, g);
 
 		/*
-		 * g.gridy = 4; g.gridx = 0; g.weightx = 0; g.gridwidth = 1; lgbPanel.add(dateDeathLabel,
-		 * g);
+		 * FIXME garder ou non ? g.gridy = 4; g.gridx = 0; g.weightx = 0; g.gridwidth = 1;
+		 * lgbPanel.add(dateDeathLabel, g);
 		 * 
 		 * g.gridy = 4; g.gridx = 2; g.weightx = 0; g.gridwidth = 6; lgbPanel.add(dateFieldDeath,
 		 * g);
@@ -282,21 +279,18 @@ public class EditPersonDialog extends JDialog implements ActionListener {
 		rgbPanel.setLayout(rgbLayout);
 
 		pictureLabel = new JLabel(new ImageIcon("resources/Pictures/vide.jpg"));
-		pictureLabel.setMinimumSize(new Dimension(140, 140));
 		pictureLabel.setPreferredSize(new Dimension(140, 140));
 		Border border = BorderFactory.createLineBorder(Color.black);
 		pictureLabel.setBorder(border);
 		pictureLabel.setAlignmentX(CENTER_ALIGNMENT);
 
 		JButton buttonAddPic = new JButton(new ImageIcon("resources/Icons/ajouter-16.png"));
-		buttonAddPic.setPreferredSize(new Dimension(28, 28));
-		buttonAddPic.setMaximumSize(new Dimension(28, 28));
+		buttonAddPic.setPreferredSize(icoButDim);
 		buttonAddPic.setActionCommand(ADD_PIC);
 		buttonAddPic.addActionListener(this);
 
 		JButton buttonDelPic = new JButton(new ImageIcon("resources/Icons/supprimer-16.png"));
-		buttonDelPic.setPreferredSize(new Dimension(28, 28));
-		buttonDelPic.setMaximumSize(new Dimension(28, 28));
+		buttonDelPic.setPreferredSize(icoButDim);
 		buttonDelPic.setActionCommand(DEL_PIC);
 		buttonDelPic.addActionListener(this);
 
@@ -310,14 +304,12 @@ public class EditPersonDialog extends JDialog implements ActionListener {
 		fatherNameField.setEditable(false);
 
 		JButton buttonAddFather = new JButton(new ImageIcon("resources/Icons/ajouter-16.png"));
-		buttonAddFather.setPreferredSize(new Dimension(28, 28));
-		buttonAddFather.setMaximumSize(new Dimension(28, 28));
+		buttonAddFather.setPreferredSize(icoButDim);
 		buttonAddFather.setActionCommand(ADD_FATHER);
 		buttonAddFather.addActionListener(this);
 
 		JButton buttonDelFather = new JButton(new ImageIcon("resources/Icons/supprimer-16.png"));
-		buttonDelFather.setPreferredSize(new Dimension(28, 28));
-		buttonDelFather.setMaximumSize(new Dimension(28, 28));
+		buttonDelFather.setPreferredSize(icoButDim);
 		buttonDelFather.setActionCommand(DEL_FATHER);
 		buttonDelFather.addActionListener(this);
 
@@ -326,14 +318,12 @@ public class EditPersonDialog extends JDialog implements ActionListener {
 		motherNameField.setEditable(false);
 
 		JButton buttonAddMother = new JButton(new ImageIcon("resources/Icons/ajouter-16.png"));
-		buttonAddMother.setPreferredSize(new Dimension(28, 28));
-		buttonAddMother.setMaximumSize(new Dimension(28, 28));
+		buttonAddMother.setPreferredSize(icoButDim);
 		buttonAddMother.setActionCommand(ADD_MOTHER);
 		buttonAddMother.addActionListener(this);
 
 		JButton buttonDelMother = new JButton(new ImageIcon("resources/Icons/supprimer-16.png"));
-		buttonDelMother.setPreferredSize(new Dimension(28, 28));
-		buttonDelMother.setMaximumSize(new Dimension(28, 28));
+		buttonDelMother.setPreferredSize(icoButDim);
 		buttonDelMother.setActionCommand(DEL_MOTHER);
 		buttonDelMother.addActionListener(this);
 
@@ -381,9 +371,7 @@ public class EditPersonDialog extends JDialog implements ActionListener {
 		buttonCancel.setActionCommand(CANCEL);
 		buttonCancel.addActionListener(this);
 
-		JPanel dialogButtonsPanel = new JPanel();
-		FlowLayout dbLayout = new FlowLayout(FlowLayout.TRAILING);
-		dialogButtonsPanel.setLayout(dbLayout);
+		JPanel dialogButtonsPanel = new JPanel(new FlowLayout(FlowLayout.TRAILING));
 
 		// --------------------------------------------------------------------
 
@@ -446,7 +434,7 @@ public class EditPersonDialog extends JDialog implements ActionListener {
 
 		// --------------------------------------------------------------------
 
-		updateFields();
+		initFields();
 		pack();
 		setLocationRelativeTo(frame);
 	}
@@ -455,13 +443,13 @@ public class EditPersonDialog extends JDialog implements ActionListener {
 	 * Sert à initialiser (et rafraichir) les champs en fonction de <i>thePerson</i>, par exemple si
 	 * c'est une personne à éditer.
 	 */
-	private void updateFields() {
-
+	private void initFields() {
 		CsvPersonDao dao = CsvPersonDao.getInstance();
 		SimplePerson temp = null;
 
 		/*
-		 * TODO ajouter l'initialisation du composant liste des enfants (c'est pour quand on édite)
+		 * TODO ajouter l'initialisation des champs nom, prenom,..., liste des enfants (c'est pour
+		 * quand on édite)
 		 */
 
 		if (thePerson.getPicname().isEmpty())
@@ -484,8 +472,6 @@ public class EditPersonDialog extends JDialog implements ActionListener {
 			} else {
 				fatherNameField.setText("");
 			}
-		} else {
-			fatherNameField.setText("");
 		}
 
 		if (thePerson.getMotherId() > 0) {
@@ -503,14 +489,11 @@ public class EditPersonDialog extends JDialog implements ActionListener {
 			} else {
 				motherNameField.setText("");
 			}
-		} else {
-			motherNameField.setText("");
 		}
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent arg0) {
-
 		/*
 		 * TODO les boutons pour ajouter un père/mère/enfant(s) -> ouvre une fenetre de choix
 		 * 'Selection personne' à partir de l'objet csv2array
@@ -518,31 +501,36 @@ public class EditPersonDialog extends JDialog implements ActionListener {
 		switch (arg0.getActionCommand()) {
 		case ADD_PIC:
 			System.out.println("add picture");
-			// FIXME lambda.setPicname("azeaeaeaze");
+			// FIXME thePerson.setPicname("azeaeaeaze");
+			if (!thePerson.getPicname().isEmpty())
+				pictureLabel.setIcon(new ImageIcon("resources/Pictures/" + thePerson.getPicname()));
 			break;
 		case DEL_PIC:
 			System.out.println("del picture");
 			thePerson.setPicname("");
+			pictureLabel.setIcon(new ImageIcon("resources/Pictures/vide.jpg"));
 			break;
 		case ADD_FATHER:
 			System.out.println("add father");
-			// FIXME lambda.setFatherId(123456);
+			addFather();
 			break;
 		case DEL_FATHER:
 			System.out.println("del father");
 			thePerson.setFatherId(0);
+			fatherNameField.setText("");
 			break;
 		case ADD_MOTHER:
 			System.out.println("add mother");
-			// FIXME lambda.setMotherId(123456);
+			addMother();
 			break;
 		case DEL_MOTHER:
 			System.out.println("del mother");
 			thePerson.setMotherId(0);
+			motherNameField.setText("");
 			break;
 		case ADD_CHILD:
 			System.out.println("add child(ren)");
-			// FIXME lambda.addChildId(123456);
+			addChild();
 			break;
 		case DEL_CHILD:
 			System.out.println("del child");
@@ -550,11 +538,56 @@ public class EditPersonDialog extends JDialog implements ActionListener {
 			break;
 		case CANCEL:
 			thePerson = null;
-			this.setVisible(false);
-			return;
+			setVisible(false);
+			break;
 		}
-
-		updateFields();
 	}
 
+	private void addFather() {
+		thePerson.setFatherId(Tableau.showPersonSelection(null, "Sélectionner le père"));
+
+		if (thePerson.getFatherId() > 0) {
+			SimplePerson temp = null;
+			try {
+				temp = CsvPersonDao.getInstance().getPerson(thePerson.getFatherId());
+			} catch (PersonIdException e) {
+				e.printStackTrace();
+				temp = null;
+			}
+			if (temp != null) {
+				if (temp.getFirstname().isEmpty())
+					fatherNameField.setText(temp.getName());
+				else
+					fatherNameField.setText(temp.getFirstname() + " " + temp.getName());
+			} else {
+				fatherNameField.setText("");
+			}
+		}
+	}
+
+	private void addMother() {
+		thePerson.setMotherId(Tableau.showPersonSelection(null, "Sélectionner la mère"));
+
+		if (thePerson.getMotherId() > 0) {
+			SimplePerson temp = null;
+			try {
+				temp = CsvPersonDao.getInstance().getPerson(thePerson.getMotherId());
+			} catch (PersonIdException e) {
+				e.printStackTrace();
+				temp = null;
+			}
+			if (temp != null) {
+				if (temp.getFirstname().isEmpty())
+					motherNameField.setText(temp.getName());
+				else
+					motherNameField.setText(temp.getFirstname() + " " + temp.getName());
+			} else {
+				motherNameField.setText("");
+			}
+		}
+	}
+
+	private void addChild() {
+		// FIXME thePerson.addChildId(123456);
+	}
 }
