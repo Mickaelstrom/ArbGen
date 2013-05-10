@@ -23,7 +23,7 @@ public class CsvPersonDao {
 	protected String[][] table;
 	protected String[] header;
 	private int nbGeneration;
-	private int nbMaxPerGen;
+	private int[] nbPerGen;
 
 	private CsvPersonDao() {
 	}
@@ -70,8 +70,8 @@ public class CsvPersonDao {
 			SimplePerson person = new SimplePerson();
 
 			/*
-			 * index 0 : id 1 : nom 2 : prénom 3 : genre 4 : id du père 5 : id de la mère 6 : date
-			 * de naissance 7 : nom du fichier de la photo
+			 * index 0 : id, 1 : nom, 2 : prénom, 3 : genre, 4 : id du père, 5 : id de la mère, 6 :
+			 * date de naissance, 7 : nom du fichier de la photo, 8 : liste d'id des enfants
 			 */
 			person.setId(Integer.parseInt(table[row][0]));
 			person.setFirstname(table[row][1]);
@@ -81,6 +81,12 @@ public class CsvPersonDao {
 			person.setMotherId("".equals(table[row][5]) ? 0 : Integer.parseInt(table[row][5]));
 			person.setBirthdate(table[row][6]);
 			person.setPicname(table[row][7]);
+			if (!table[row][8].isEmpty()) {
+				String[] childrenId = table[row][8].split(" ");
+				for (int i = childrenId.length - 1; i >= 0; i--) {
+					person.addChildId(Integer.parseInt(childrenId[i]));
+				}
+			}
 
 			persons.add(person);
 			mapLinksId.put(person.getId(), row);
@@ -166,14 +172,12 @@ public class CsvPersonDao {
 	 */
 	private void calculateTreeInfos() {
 		nbGeneration = 0;
-		nbMaxPerGen = 0;
 		if (persons.size() == 0)
 			return;
 
-		// FIXME corriger l'algo pour goDown
-		nbGeneration = goUp(persons.get(mapLinksId.get(5)), 1);
-		System.out.println(nbGeneration);
-		goDown(persons.get(mapLinksId.get(7)), 1);
+		nbGeneration = goUp(persons.get(mapLinksId.get(1)), 1)
+				+ goDown(persons.get(mapLinksId.get(1)), 1) - 1;
+
 	}
 
 	/**
@@ -209,8 +213,16 @@ public class CsvPersonDao {
 	 *            Le nombre de génération actuelle
 	 * @return Le nombre de génération compté vers le haut
 	 */
-	private void goDown(SimplePerson pers, int nbGen) {
-		// hou la cata...
-		// FIXME SimplePerson contient la liste des id des enfants serait mieux ??
+	private int goDown(SimplePerson pers, int nbGen) {
+		int maxDepth = nbGen;
+		int curDepth = nbGen;
+
+		for (Integer id : pers.getChildrenId()) {
+			curDepth = goDown(persons.get(mapLinksId.get(id)), nbGen + 1);
+			if (curDepth > maxDepth)
+				maxDepth = curDepth;
+		}
+
+		return maxDepth;
 	}
 }
