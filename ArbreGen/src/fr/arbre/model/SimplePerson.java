@@ -1,7 +1,6 @@
 package fr.arbre.model;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -159,7 +158,7 @@ public class SimplePerson implements Person {
 	public String toString() {
 		return "SimplePerson[ id:" + id + ", nom:" + name + ", prénom:" + firstname + ", genre:"
 				+ gender + ", id père:" + fatherId + ", id mère:" + motherId + ", né(e) le:"
-				+ birthdate + ", fichier:" + picname + " ]";
+				+ birthdate + ", fichier:" + picname + ", id enfants:" + childrenId + " ]";
 	}
 
 	@Override
@@ -173,6 +172,7 @@ public class SimplePerson implements Person {
 		copy.setMotherId(motherId);
 		copy.setBirthdate(birthdate);
 		copy.setPicname(picname);
+		copy.setChildrenId(childrenId);
 
 		return copy;
 	}

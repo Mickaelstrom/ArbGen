@@ -90,7 +90,7 @@ public class Panel_AffichageArbre extends JPanel {
 
 			// Ouverture fenetre tableau
 			System.out.println("displayMemberTable.");
-			Tableau popup = new Tableau(null, "Afficher une table", true);
+			/* Tableau popup = */new Tableau(null, "Afficher une table", false);
 
 		}
 	}

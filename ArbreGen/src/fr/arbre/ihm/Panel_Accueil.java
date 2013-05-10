@@ -12,9 +12,9 @@ import javax.swing.JPanel;
 
 @SuppressWarnings("serial")
 public class Panel_Accueil extends JPanel {
-	private JLabel			tree;
+	private JLabel tree;
 
-	private Popup_Action	popup_action	= new Popup_Action();
+	private Popup_Action popup_action = new Popup_Action();
 
 	public Panel_Accueil() {
 
@@ -39,7 +39,7 @@ public class Panel_Accueil extends JPanel {
 
 	class Popup_Action implements ActionListener {
 		public void actionPerformed(ActionEvent arg0) {
-			new Tableau(null, "Afficher une table", true);
+			new Tableau(null, "Afficher une table", false);
 		}
 	}
 

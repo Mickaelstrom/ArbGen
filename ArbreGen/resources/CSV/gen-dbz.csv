@@ -1,14 +1,14 @@
-#id;Prenom;Nom;Sexe;Pere;Mere;Date de naissance;Nom de la photo
-1;sangoku junior;;M;2;3;;sangoku jr.jpg
-2;;;M;;;;
-3;;;F;4;;;
-4;Pan;;F;5;6;;pan.jpg
-5;Sangohan;;M;7;8;;sangohan.jpg
-6;Videl;;F;9;;;videl.jpg
-7;Sangoku;;M;10;;;sangoku.jpg
-8;Chichi;;F;11;;;chichi.jpg
-9;Hercule;;M;;;;hercule.jpg
-10;Baddack;;M;;;;baddack.jpg
-11;Gyumao;;M;;;;gyumao.jpg
-12;Sangoten;;M;7;8;;sangoten.jpg
-13;Raditz;;M;10;;;raditz.jpg
+#id;Prenom;Nom;Sexe;Pere;Mere;Date de naissance;Nom de la photo;Enfants
+1;sangoku junior;;M;2;3;;sangoku jr.jpg;
+2;;;M;;;;;1
+3;;;F;4;;;;1
+4;Pan;;F;5;6;;pan.jpg;3
+5;Sangohan;;M;7;8;;sangohan.jpg;4
+6;Videl;;F;9;;;videl.jpg;4
+7;Sangoku;;M;10;;;sangoku.jpg;5 12
+8;Chichi;;F;11;;;chichi.jpg;5 12
+9;Hercule;;M;;;;hercule.jpg;6
+10;Baddack;;M;;;;baddack.jpg;7
+11;Gyumao;;M;;;;gyumao.jpg;8
+12;Sangoten;;M;7;8;;sangoten.jpg;
+13;Raditz;;M;10;;;raditz.jpg;
