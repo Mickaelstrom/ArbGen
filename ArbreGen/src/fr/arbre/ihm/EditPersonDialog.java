@@ -21,6 +21,7 @@ import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JDialog;
+import javax.swing.JFileChooser;
 import javax.swing.JFormattedTextField;
 import javax.swing.JLabel;
 import javax.swing.JList;
@@ -30,6 +31,7 @@ import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.border.Border;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.text.DateFormatter;
 
 import fr.arbre.dao.csv.CsvPersonDao;
@@ -500,31 +502,23 @@ public class EditPersonDialog extends JDialog implements ActionListener {
 		 */
 		switch (arg0.getActionCommand()) {
 		case ADD_PIC:
-			System.out.println("add picture");
-			// FIXME thePerson.setPicname("azeaeaeaze");
-			if (!thePerson.getPicname().isEmpty())
-				pictureLabel.setIcon(new ImageIcon("resources/Pictures/" + thePerson.getPicname()));
+			addPic();
 			break;
 		case DEL_PIC:
-			System.out.println("del picture");
 			thePerson.setPicname("");
 			pictureLabel.setIcon(new ImageIcon("resources/Pictures/vide.jpg"));
 			break;
 		case ADD_FATHER:
-			System.out.println("add father");
 			addFather();
 			break;
 		case DEL_FATHER:
-			System.out.println("del father");
 			thePerson.setFatherId(0);
 			fatherNameField.setText("");
 			break;
 		case ADD_MOTHER:
-			System.out.println("add mother");
 			addMother();
 			break;
 		case DEL_MOTHER:
-			System.out.println("del mother");
 			thePerson.setMotherId(0);
 			motherNameField.setText("");
 			break;
@@ -541,6 +535,19 @@ public class EditPersonDialog extends JDialog implements ActionListener {
 			setVisible(false);
 			break;
 		}
+	}
+
+	private void addPic() {
+		JFileChooser fc = new JFileChooser("resources/Pictures/");
+		FileNameExtensionFilter filter = new FileNameExtensionFilter("JPG & GIF Images", "jpg",
+				"png", "bmp", "gif");
+		fc.setFileFilter(filter);
+		if (fc.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
+			thePerson.setPicname(fc.getSelectedFile().getName());
+			if (!thePerson.getPicname().isEmpty())
+				pictureLabel.setIcon(new ImageIcon("resources/Pictures/" + thePerson.getPicname()));
+		}
+
 	}
 
 	private void addFather() {
