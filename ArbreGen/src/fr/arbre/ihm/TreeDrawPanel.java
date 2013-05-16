@@ -10,7 +10,6 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.Iterator;
-import java.util.List;
 
 import javax.imageio.ImageIO;
 import javax.swing.JPanel;
@@ -46,7 +45,7 @@ public class TreeDrawPanel extends JPanel {
 		Image img = createImage(imageWidth(), imageHeight());
 		Graphics g = img.getGraphics();
 
-		g.setColor(Color.GRAY);
+		g.setColor(Color.WHITE);
 		g.fillRect(0, 0, imageWidth(), imageHeight());
 
 		if (offscreen != null) {

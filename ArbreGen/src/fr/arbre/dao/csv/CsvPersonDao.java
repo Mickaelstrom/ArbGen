@@ -229,6 +229,17 @@ public class CsvPersonDao {
 		}
 	}
 
+	private int imageWidth;
+	private int imageHeight;
+
+	public int getImageWidth() {
+		return imageWidth;
+	}
+
+	public int getImageHeight() {
+		return imageHeight;
+	}
+
 	/**
 	 * Calcule la position des frames de chaque personne dans l'image de l'arbre
 	 * 
@@ -238,13 +249,11 @@ public class CsvPersonDao {
 		/**
 		 * TODO <br/>
 		 * ->Image deux fois plus large<br/>
-		 * ->On copie depuis la personne la plus à gauche jusqu'à la plus à droite sur l'image plus
+		 * On copie depuis la personne la plus à gauche jusqu'à la plus à droite sur l'image plus
 		 * petite<br/>
-		 * ->on dessine les personnes recursivement vers le haut<br/>
+		 * ->On dessine les personnes recursivement vers le haut<br/>
 		 */
 		final int MARGIN = 50;
-		final double IMAGE_W;
-		final double IMAGE_H;
 		int minY = Integer.MAX_VALUE;
 		int maxY = Integer.MIN_VALUE;
 		int offsetY = 0;
@@ -255,7 +264,7 @@ public class CsvPersonDao {
 				maxW = multimap.get(key).size();
 			}
 		}
-		IMAGE_W = PersonFrame.WIDTH + 2 * PersonFrame.WIDTH * (maxW - 1);
+		imageWidth = PersonFrame.WIDTH + 2 * PersonFrame.WIDTH * (maxW - 1);
 
 		for (Integer key : multimap.keySet()) {
 			if (key < minY)
@@ -263,7 +272,7 @@ public class CsvPersonDao {
 			if (key > maxY)
 				maxY = key;
 		}
-		IMAGE_H = 1.5 * (maxY - minY) * PersonFrame.HEIGHT + 2 * MARGIN;
+		imageHeight = (int) (1.5 * (maxY - minY) * PersonFrame.HEIGHT + 2 * MARGIN);
 
 		if (minY != 0) {
 			offsetY = -minY;
@@ -274,7 +283,7 @@ public class CsvPersonDao {
 			int size = multimap.get(key).size();
 			int width = PersonFrame.WIDTH + (size - 1) * PersonFrame.WIDTH * 2; // largeur de la
 																				// ligne
-			int cx = (((int) IMAGE_W) - width) / 2;
+			int cx = (((int) imageWidth) - width) / 2;
 			int x = MARGIN + cx;
 
 			// parcourir les personnes sur la ligne
@@ -287,10 +296,12 @@ public class CsvPersonDao {
 				}
 				if (person != null) {
 					Integer[] brothers = getBrothers(person);
-					int y = ((int) IMAGE_H) - (MARGIN + PersonFrame.HEIGHT * 2 * (key + offsetY));
+					int y = ((int) imageHeight)
+							- (MARGIN + PersonFrame.HEIGHT * 2 * (key + offsetY));
 					for (int j = 0; j < brothers.length; j++, x += 2 * PersonFrame.WIDTH) {
 						try {
-							getPerson(brothers[j]).setFrame(new PersonFrame(person, x, y));
+							getPerson(brothers[j]).setFrame(
+									new PersonFrame(getPerson(brothers[j]), x, y));
 							System.out.println("id=" + brothers[j] + ", x=" + x + ",y=" + y);
 						} catch (PersonIdException e) {
 							e.printStackTrace();
