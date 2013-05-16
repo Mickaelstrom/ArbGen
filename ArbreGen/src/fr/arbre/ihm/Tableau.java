@@ -5,6 +5,8 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -28,8 +30,8 @@ public class Tableau extends JDialog {
 		scrollPane.setPreferredSize(new Dimension(700, 300));
 
 		setLayout(new BorderLayout());
-
 		add(scrollPane, BorderLayout.CENTER);
+
 		if (selectON) {
 			id = 0;
 			JButton buttonOk = new JButton("Ok");
@@ -44,6 +46,34 @@ public class Tableau extends JDialog {
 				public void actionPerformed(ActionEvent arg0) {
 					id = 0;
 					setVisible(false);
+				}
+			});
+
+			tableau.addMouseListener(new MouseListener() {
+				@Override
+				public void mouseClicked(MouseEvent arg0) {
+					if (arg0.getButton() == MouseEvent.BUTTON1) {
+						if (arg0.getClickCount() == 2) {
+							id = tableau.getSelectedId();
+							setVisible(false);
+						}
+					}
+				}
+
+				@Override
+				public void mouseEntered(MouseEvent e) {
+				}
+
+				@Override
+				public void mouseExited(MouseEvent e) {
+				}
+
+				@Override
+				public void mousePressed(MouseEvent e) {
+				}
+
+				@Override
+				public void mouseReleased(MouseEvent e) {
 				}
 			});
 
