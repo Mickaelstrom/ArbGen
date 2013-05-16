@@ -12,7 +12,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -96,10 +98,12 @@ public class EditPersonDialog extends JDialog implements ActionListener {
 
 	/*-----------------------------------------------------------------------*/
 
+	private List<Integer> childrenId;
 	private JLabel pictureLabel;
 	private JTextField fatherNameField;
 	private JTextField motherNameField;
 	private DefaultListModel<String> listChildModel;
+	private JList<String> listChild;
 
 	ButtonGroup radioGroup;
 	public static JScrollPane scrollpane = new JScrollPane();
@@ -110,6 +114,7 @@ public class EditPersonDialog extends JDialog implements ActionListener {
 		setResizable(false);
 
 		thePerson = (person == null) ? new SimplePerson() : person.clone();
+		childrenId = new ArrayList<Integer>(thePerson.getChildrenId());
 
 		final Dimension icoButDim = new Dimension(28, 28);
 		// PARTIE GAUCHE ------------------------------------------------------
@@ -156,7 +161,7 @@ public class EditPersonDialog extends JDialog implements ActionListener {
 		// enfants
 		JLabel childLabel = new JLabel("Enfant(s) ");
 		listChildModel = new DefaultListModel<String>();
-		final JList<String> listChild = new JList<String>(listChildModel);
+		listChild = new JList<String>(listChildModel);
 		listChild.setVisibleRowCount(4);
 		scrollpane = new JScrollPane(listChild);
 
@@ -313,13 +318,8 @@ public class EditPersonDialog extends JDialog implements ActionListener {
 		JButton buttonOk = new JButton("Ok");
 		buttonOk.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				String nameFieldText = nameField.getText();
-				System.out.println(nameFieldText);
-				thePerson.setName(nameFieldText);
-
-				String firstNameFieldText = firstNameField.getText();
-				System.out.println(firstNameFieldText);
-				thePerson.setFirstname(firstNameFieldText);
+				thePerson.setName(nameField.getText());
+				thePerson.setFirstname(firstNameField.getText());
 
 				if (femaleButton.isSelected()) {
 					thePerson.setGender(Gender.FEMALE);
@@ -327,12 +327,9 @@ public class EditPersonDialog extends JDialog implements ActionListener {
 					thePerson.setGender(Gender.MALE);
 				}
 
-				String birthDateText = dateFieldBirth.getText();
-				System.out.println(birthDateText);
-				thePerson.setBirthdate(birthDateText);
+				thePerson.setBirthdate(dateFieldBirth.getText());
 
-				String childText = (String) listChild.getSelectedValue();
-				System.out.println(childText);
+				thePerson.setChildrenId(childrenId);
 
 				setVisible(false);
 			}
@@ -418,10 +415,21 @@ public class EditPersonDialog extends JDialog implements ActionListener {
 		CsvPersonDao dao = CsvPersonDao.getInstance();
 		SimplePerson temp = null;
 
-		/*
-		 * TODO ajouter l'initialisation des champs nom, prenom,..., liste des enfants (c'est pour
-		 * quand on édite)
-		 */
+		for (int i = 0; i < childrenId.size(); i++) {
+			try {
+				temp = CsvPersonDao.getInstance().getPerson(childrenId.get(i));
+			} catch (PersonIdException e) {
+				temp = null;
+				e.printStackTrace();
+			}
+			if (temp != null) {
+				if (temp.getFirstname().isEmpty()) {
+					listChildModel.addElement(temp.getName());
+				} else {
+					listChildModel.addElement(temp.getFirstname() + " " + temp.getName());
+				}
+			}
+		}
 
 		if (thePerson.getPicname().isEmpty())
 			pictureLabel.setIcon(new ImageIcon("resources/Pictures/vide.jpg"));
@@ -465,10 +473,6 @@ public class EditPersonDialog extends JDialog implements ActionListener {
 
 	@Override
 	public void actionPerformed(ActionEvent arg0) {
-		/*
-		 * TODO les boutons pour ajouter un père/mère/enfant(s) -> ouvre une fenetre de choix
-		 * 'Selection personne' à partir de l'objet csv2array
-		 */
 		switch (arg0.getActionCommand()) {
 		case ADD_PIC:
 			addPic();
@@ -492,12 +496,15 @@ public class EditPersonDialog extends JDialog implements ActionListener {
 			motherNameField.setText("");
 			break;
 		case ADD_CHILD:
-			System.out.println("add child(ren)");
+			System.out.println("add child");
 			addChild();
 			break;
 		case DEL_CHILD:
 			System.out.println("del child");
-			// FIXME lambda.deleteChildId(123456);
+			if (!listChild.isSelectionEmpty()) {
+				childrenId.remove(listChild.getSelectedIndex());
+				listChildModel.remove(listChild.getSelectedIndex());
+			}
 			break;
 		case CANCEL:
 			thePerson = null;
@@ -568,9 +575,10 @@ public class EditPersonDialog extends JDialog implements ActionListener {
 	}
 
 	private void addChild() {
-		int id = Tableau.showPersonSelection("Sélectionner les enfants");
+		int id = Tableau.showPersonSelection("Sélectionner un enfant");
 
 		if (id > 0) {
+			childrenId.add(id);
 			thePerson.addChildId(id);
 			SimplePerson temp = null;
 			try {
