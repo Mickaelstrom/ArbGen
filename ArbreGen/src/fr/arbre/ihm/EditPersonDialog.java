@@ -496,11 +496,9 @@ public class EditPersonDialog extends JDialog implements ActionListener {
 			motherNameField.setText("");
 			break;
 		case ADD_CHILD:
-			System.out.println("add child");
 			addChild();
 			break;
 		case DEL_CHILD:
-			System.out.println("del child");
 			if (!listChild.isSelectionEmpty()) {
 				childrenId.remove(listChild.getSelectedIndex());
 				listChildModel.remove(listChild.getSelectedIndex());
@@ -590,17 +588,27 @@ public class EditPersonDialog extends JDialog implements ActionListener {
 			}
 
 			if (temp != null) {
-				thePerson.getChildrenId().remove((thePerson.getChildrenId().size()) - 1);
 
-				if (thePerson.getChildrenId().contains(temp.getId()) == false) {
-					thePerson.addChildId(temp.getId());
-					if (temp.getFirstname().isEmpty()) {
-						listChildModel.addElement(temp.getName());
+				thePerson.getChildrenId().remove((thePerson.getChildrenId().size()) - 1);
+				if ((thePerson.getId() != temp.getId())
+						&& (thePerson.getFatherId() != temp.getId())
+						&& (thePerson.getMotherId() != temp.getId())) {
+
+					if (thePerson.getChildrenId().contains(temp.getId()) == false) {
+
+						thePerson.addChildId(temp.getId());
+
+						if (temp.getFirstname().isEmpty()) {
+							listChildModel.addElement(temp.getName());
+						} else {
+							listChildModel.addElement(temp.getFirstname() + " " + temp.getName());
+						}
 					} else {
-						listChildModel.addElement(temp.getFirstname() + " " + temp.getName());
+						childrenId.remove((childrenId.size()) - 1);
 					}
 				} else {
 					listChildModel.addElement(null);
+					childrenId.remove((childrenId.size()) - 1);
 				}
 
 			}
