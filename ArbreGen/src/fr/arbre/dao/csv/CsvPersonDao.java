@@ -1,31 +1,30 @@
 package fr.arbre.dao.csv;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import fr.arbre.model.Gender;
+import fr.arbre.model.PersonFrame;
 import fr.arbre.model.SimplePerson;
 
 /**
- * Cette classe permet de créer un singleton qui contiendra une liste de personne préalablement
- * chargé par la fonction load().
+ * Singleton contenant une liste de personne préalablement chargé par la fonction load().
  */
 public class CsvPersonDao {
-
 	private static CsvPersonDao instance = new CsvPersonDao();
-	protected File file;
-	protected List<SimplePerson> persons;
-	private Map<Integer, Integer> mapLinksId; // clé id de la personne, valeur sa position dans la
-												// liste persons
-	protected String[][] table;
-	protected String[] header;
-	private int nbGeneration;
-	private int[] nbPerGen;
+	// ---------------------------------------------------------------------------------------------
 
+	protected List<SimplePerson> persons;
+	protected String[] header; // Entetes des colonnes du JTable
+	protected String[][] table; // Données pour le JTable
+
+	// ---------------------------------------------------------------------------------------------
 	private CsvPersonDao() {
+		// privé
 	}
 
 	public static CsvPersonDao getInstance() {
@@ -35,19 +34,17 @@ public class CsvPersonDao {
 	/**
 	 * Obtenir la table des données des personnes.
 	 * 
-	 * @return Un tableau à deux dimensions [id personne][id colonne] des données (pas de nom des
-	 *         colonne).
+	 * @return Un tableau à deux dimensions [index ligne][index colonne] des données (sans entetes).
 	 */
 	public String[][] getTable() {
 		return table;
 	}
 
 	/**
-	 * Cette fonction permet de charger les données dans un fichier <i>csv</i> et de le stocker dans
-	 * l'instance unique de CsvPersonDao.
+	 * Charge les données d'un fichier <i>csv</i> et le stocke.
 	 * 
 	 * @param filename
-	 *            Fichier où sont stockés les données des personnes de l'arbre.
+	 *            Nom du fichier contenant les données.
 	 */
 	public void load(String filename) {
 		Csv2Array data = new Csv2Array(filename);
@@ -65,7 +62,6 @@ public class CsvPersonDao {
 		}
 
 		persons = new ArrayList<SimplePerson>();
-		mapLinksId = new HashMap<Integer, Integer>();
 		for (int row = 0, size = table.length; row < size; row++) {
 			SimplePerson person = new SimplePerson();
 
@@ -81,6 +77,9 @@ public class CsvPersonDao {
 			person.setMotherId("".equals(table[row][5]) ? 0 : Integer.parseInt(table[row][5]));
 			person.setBirthdate(table[row][6]);
 			person.setPicname(table[row][7]);
+			if (person.getPicname().isEmpty()) {
+				person.setPicname("vide.jpg");
+			}
 			if (!table[row][8].isEmpty()) {
 				String[] childrenId = table[row][8].split(" ");
 				for (int i = childrenId.length - 1; i >= 0; i--) {
@@ -89,7 +88,6 @@ public class CsvPersonDao {
 			}
 
 			persons.add(person);
-			mapLinksId.put(person.getId(), row);
 		}
 
 		calculateTreeInfos();
@@ -107,20 +105,17 @@ public class CsvPersonDao {
 	/**
 	 * Récupère une personne en fonction de <i>id</i>.
 	 * 
-	 * @param id
-	 *            Identifiant de la personne à chercher.
 	 * @return Une SimplePerson si elle a été trouvée dans la liste sinon lance une exception.
 	 * @throws PersonIdException
 	 *             si l'id est incorrect ou si la personne n'a pas été trouvé.
 	 */
-	public SimplePerson getPerson(int id) throws PersonIdException {
-		if (id < 0) // 0: personne vide, >=1: les personnes
+	public SimplePerson getPerson(int personId) throws PersonIdException {
+		if (personId <= 0) // id<=0:erreur, valide sinon
 			throw new PersonIdException("Valeur de l'index de la personne incorrect");
 
 		SimplePerson returnPerson = null;
-
 		for (SimplePerson person : persons) {
-			if (person.getId() == id) {
+			if (person.getId() == personId) {
 				returnPerson = person;
 				break;
 			}
@@ -132,14 +127,17 @@ public class CsvPersonDao {
 		return returnPerson;
 	}
 
+	public List<SimplePerson> getPersons() {
+		return persons;
+	}
+
 	/**
 	 * Permet d'obtenir une liste de personne trié en fonction du genre.
 	 * 
 	 * @param filter
-	 *            Gender.MALE ou Gender.FEMALE
+	 *            {@link Gender#MALE} ou {@link Gender#FEMALE}
 	 * @return Une liste de SimplePerson filtré.
 	 * @throws GenderException
-	 *             Si genre incorrect.
 	 */
 	public List<SimplePerson> getTableByGender(Gender filter) throws GenderException {
 		if (filter != Gender.MALE && filter != Gender.FEMALE)
@@ -157,72 +155,176 @@ public class CsvPersonDao {
 
 	/**
 	 * Obtenir les noms des colonnes.
-	 * 
-	 * @return Un tableau de String.
 	 */
 	public String[] getHeader() {
 		return header;
 	}
 
+	// ---------------------------------------------------------------------------------------------
+
+	private void calculateTreeInfos() {
+		/**
+		 * <b>Clé :</b> Profondeur d'indentation de la génération.<br/>
+		 * <b>Valeur :</b> Une liste d'identifiants des personnes sur cette ligne.
+		 */
+		Map<Integer, List<Integer>> multimap = new HashMap<Integer, List<Integer>>();
+
+		// remplir multimap en partant de la personne d'id 1 avec une indentation=0
+		walkTree(multimap, persons.get(0).getId(), 0);
+
+		makeFrames(multimap);
+	}
+
 	/**
-	 * Calculer le nombre max de personne sur la meme ligne et le nombre de generation.<br/>
+	 * Identifie le nombre de generation ainsi que l'id des personnes sur chacune d'entre elle.<br/>
 	 * <p>
 	 * <b>Note : </b>Utile pour définir la taille de l'image du treedrawpanel.
 	 * </p>
 	 */
-	private void calculateTreeInfos() {
-		nbGeneration = 0;
-		if (persons.size() == 0)
+	private void walkTree(Map<Integer, List<Integer>> multimap, int personId, int indent) {
+		SimplePerson person = null;
+
+		if (!multimap.containsKey(indent)) {
+			// ajoute l'id de la génération si elle n'existe pas déjà et créer la liste
+			multimap.put(indent, new ArrayList<Integer>());
+		}
+
+		if (multimap.get(indent).contains(personId)) {
+			// personne déjà traité
 			return;
+		} else {
+			// ajoute la personne si elle n'est pas dans cette génération
+			multimap.get(indent).add(personId);
+		}
 
-		nbGeneration = goUp(persons.get(mapLinksId.get(1)), 1)
-				+ goDown(persons.get(mapLinksId.get(1)), 1) - 1;
+		try {
+			person = this.getPerson(personId);
+		} catch (PersonIdException e) {
+			e.printStackTrace();
+			return;
+		}
 
+		if (person.getFatherId() > 0) {
+			walkTree(multimap, person.getFatherId(), indent + 1);
+		}
+
+		if (person.getMotherId() > 0) {
+			walkTree(multimap, person.getMotherId(), indent + 1);
+		}
+
+		if (person.getChildrenId().size() > 0) {
+			for (int i = person.getChildrenId().size() - 1; i >= 0; i--) {
+				walkTree(multimap, person.getChildrenId().get(i), indent - 1);
+			}
+		}
 	}
 
 	/**
-	 * Nombre de génération au dessus + actuelle
+	 * Calcule la position des frames de chaque personne dans l'image de l'arbre
 	 * 
-	 * @param pers
-	 *            La personne d'où il faut partir
-	 * @param nbGen
-	 *            Le nombre de génération actuelle
-	 * @return Le nombre de génération compté vers le haut
+	 * @param multimap
 	 */
-	private int goUp(SimplePerson pers, int nbGen) {
-		int height1 = nbGen;
-		int height2 = nbGen;
+	private void makeFrames(Map<Integer, List<Integer>> multimap) {
+		/**
+		 * TODO <br/>
+		 * ->Image deux fois plus large<br/>
+		 * ->On copie depuis la personne la plus à gauche jusqu'à la plus à droite sur l'image plus
+		 * petite<br/>
+		 * ->on dessine les personnes recursivement vers le haut<br/>
+		 */
+		final int MARGIN = 50;
+		final double IMAGE_W;
+		final double IMAGE_H;
+		int minY = Integer.MAX_VALUE;
+		int maxY = Integer.MIN_VALUE;
+		int offsetY = 0;
+		int maxW = 0;
 
-		// récursivité powaaaa!!!
-		if (pers.getFatherId() > 0) {
-			height1 = goUp(persons.get(mapLinksId.get(pers.getFatherId())), nbGen + 1);
+		for (Integer key : multimap.keySet()) {
+			if (multimap.get(key).size() > maxW) {
+				maxW = multimap.get(key).size();
+			}
 		}
-		if (pers.getMotherId() > 0) {
-			height2 = goUp(persons.get(mapLinksId.get(pers.getMotherId())), nbGen + 1);
+		IMAGE_W = PersonFrame.WIDTH + 2 * PersonFrame.WIDTH * (maxW - 1);
+
+		for (Integer key : multimap.keySet()) {
+			if (key < minY)
+				minY = key;
+			if (key > maxY)
+				maxY = key;
+		}
+		IMAGE_H = 1.5 * (maxY - minY) * PersonFrame.HEIGHT + 2 * MARGIN;
+
+		if (minY != 0) {
+			offsetY = -minY;
 		}
 
-		return ((height1 > height2) ? height1 : height2);
+		for (int key = minY; key < maxY; key++) {
+			int size = multimap.get(key).size();
+			int width = PersonFrame.WIDTH + (size - 1) * PersonFrame.WIDTH * 2; // largeur de la
+																				// ligne
+			int cx = (((int) IMAGE_W) - width) / 2;
+			int x = MARGIN + cx;
+
+			// parcourir les personnes sur la ligne
+			while (size > 0) {
+				SimplePerson person = null;
+				try {
+					person = getPerson(multimap.get(key).get(0));
+				} catch (PersonIdException e) {
+					e.printStackTrace();
+				}
+				if (person != null) {
+					Integer[] brothers = getBrothers(person);
+					int y = ((int) IMAGE_H) - (MARGIN + PersonFrame.HEIGHT * 2 * (key + offsetY));
+					for (int j = 0; j < brothers.length; j++, x += 2 * PersonFrame.WIDTH) {
+						try {
+							getPerson(brothers[j]).setFrame(new PersonFrame(person, x, y));
+							System.out.println("id=" + brothers[j] + ", x=" + x + ",y=" + y);
+						} catch (PersonIdException e) {
+							e.printStackTrace();
+						}
+
+						// supprimer la personne ajouté de la liste d'attente
+						multimap.get(key).remove((Object) brothers[j]);
+						size--;
+					}
+				}
+			}
+		}
 	}
 
 	/**
-	 * Nombre de generation en dessous + actuelle
-	 * 
-	 * @param pers
-	 *            La personne d'où il faut partir
-	 * @param nbGen
-	 *            Le nombre de génération actuelle
-	 * @return Le nombre de génération compté vers le haut
+	 * @return Un set d'identifiants (sans répétition donc).
 	 */
-	private int goDown(SimplePerson pers, int nbGen) {
-		int maxDepth = nbGen;
-		int curDepth = nbGen;
+	private Integer[] getBrothers(SimplePerson person) {
+		Set<Integer> brothers = new HashSet<Integer>();
+		List<Integer> fatherChildren = null;
+		List<Integer> motherChildren = null;
 
-		for (Integer id : pers.getChildrenId()) {
-			curDepth = goDown(persons.get(mapLinksId.get(id)), nbGen + 1);
-			if (curDepth > maxDepth)
-				maxDepth = curDepth;
+		if (person.getFatherId() > 0) {
+			try {
+				fatherChildren = getPerson(person.getFatherId()).getChildrenId();
+			} catch (PersonIdException e) {
+				e.printStackTrace();
+				fatherChildren = null;
+			}
+		}
+		if (person.getMotherId() > 0) {
+			try {
+				motherChildren = getPerson(person.getMotherId()).getChildrenId();
+			} catch (PersonIdException e) {
+				e.printStackTrace();
+				motherChildren = null;
+			}
 		}
 
-		return maxDepth;
+		if (fatherChildren != null)
+			brothers.addAll(fatherChildren);
+
+		if (motherChildren != null)
+			brothers.addAll(motherChildren);
+
+		return (Integer[]) brothers.toArray();
 	}
 }
