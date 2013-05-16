@@ -172,6 +172,7 @@ public class CsvPersonDao {
 		// remplir multimap en partant de la personne d'id 1 avec une indentation=0
 		walkTree(multimap, persons.get(0).getId(), 0);
 
+		// définir position des frames
 		makeFrames(multimap);
 	}
 
@@ -259,7 +260,8 @@ public class CsvPersonDao {
 			offsetY = -minY;
 		}
 
-		for (int key = minY; key < maxY; key++) {
+		// parcourir les générations
+		for (int key = minY; key <= maxY; key++) {
 			int size = multimap.get(key).size();
 			int width = PersonFrame.WIDTH + (size - 1) * PersonFrame.WIDTH * 2; // largeur de la
 																				// ligne
@@ -302,6 +304,8 @@ public class CsvPersonDao {
 		List<Integer> fatherChildren = null;
 		List<Integer> motherChildren = null;
 
+		brothers.add(person.getId());
+
 		if (person.getFatherId() > 0) {
 			try {
 				fatherChildren = getPerson(person.getFatherId()).getChildrenId();
@@ -325,6 +329,9 @@ public class CsvPersonDao {
 		if (motherChildren != null)
 			brothers.addAll(motherChildren);
 
-		return (Integer[]) brothers.toArray();
+		Integer[] array = new Integer[brothers.size()];
+		brothers.toArray(array);
+
+		return array;
 	}
 }
