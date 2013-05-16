@@ -7,17 +7,27 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 
 import fr.arbre.dao.csv.CsvPersonDao;
+import fr.arbre.dao.csv.GenderException;
+import fr.arbre.model.Gender;
 
 @SuppressWarnings("serial")
 public class Table_Csv2Array extends JTable {
 
-	public Table_Csv2Array(String filename) {
+	public Table_Csv2Array(String filename, Gender gender) {
 		CsvPersonDao dao = CsvPersonDao.getInstance();
 		if (filename != null) {
 			dao.load(filename);
 		}
-
-		String[][] tab = dao.getTable();
+		String[][] tab = null;
+		if (gender == null) {
+			tab = dao.getTable();
+		} else {
+			try {
+				tab = dao.getTableByGender(gender);
+			} catch (GenderException e) {
+				e.printStackTrace();
+			}
+		}
 		DefaultTableModel dtm = new DefaultTableModel(tab, dao.getHeader()) {
 			public boolean isCellEditable(int row, int column) {
 				return false;

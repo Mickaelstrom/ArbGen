@@ -136,21 +136,30 @@ public class CsvPersonDao {
 	 * 
 	 * @param filter
 	 *            {@link Gender#MALE} ou {@link Gender#FEMALE}
-	 * @return Une liste de SimplePerson filtré.
+	 * @return Une table de SimplePerson filtré.
 	 * @throws GenderException
 	 */
-	public List<SimplePerson> getTableByGender(Gender filter) throws GenderException {
+	public String[][] getTableByGender(Gender filter) throws GenderException {
 		if (filter != Gender.MALE && filter != Gender.FEMALE)
 			throw new GenderException("Le genre est incorrect");
 
-		List<SimplePerson> list = new ArrayList<SimplePerson>();
+		int count = 0;
 		for (SimplePerson person : persons) {
 			if (person.getGender() == filter) {
-				list.add(person);
+				count++;
 			}
 		}
 
-		return list;
+		String[][] array = new String[count][header.length];
+		for (int row = 0, i = 0; row < table.length; row++) {
+			if (filter.isMale() && "M".equalsIgnoreCase(table[row][3])) {
+				array[i++] = table[row].clone();
+			} else if ((!filter.isMale()) && "F".equalsIgnoreCase(table[row][3])) {
+				array[i++] = table[row].clone();
+			}
+		}
+
+		return array;
 	}
 
 	/**

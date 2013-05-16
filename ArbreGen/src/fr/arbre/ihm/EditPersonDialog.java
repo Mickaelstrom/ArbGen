@@ -18,6 +18,7 @@ import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
+import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -98,6 +99,7 @@ public class EditPersonDialog extends JDialog implements ActionListener {
 	private JLabel pictureLabel;
 	private JTextField fatherNameField;
 	private JTextField motherNameField;
+	private DefaultListModel<String> listChildModel;
 
 	ButtonGroup radioGroup;
 	public static JScrollPane scrollpane = new JScrollPane();
@@ -140,6 +142,7 @@ public class EditPersonDialog extends JDialog implements ActionListener {
 		final JRadioButton femaleButton;
 		radioGroup.add(femaleButton = new JRadioButton("Femme"));
 		panGender.add(femaleButton);
+		maleButton.setSelected(true);
 
 		// Birthdate
 		JLabel birthDateLabel = new JLabel("Né(e) le ");
@@ -150,24 +153,10 @@ public class EditPersonDialog extends JDialog implements ActionListener {
 		dateFieldBirth.setPreferredSize(new Dimension(20, 20));
 		dateFieldBirth.setValue(new Date());
 
-		// Date of death
-		/*
-		 * FIXME garder ou non ? telle est la question... JLabel dateDeathLabel = new
-		 * JLabel("Parti(e) le ");
-		 * 
-		 * DateFormat formatDeath = new SimpleDateFormat("dd/MM/yyyy"); DateFormatter df = new
-		 * DateFormatter(formatDeath); final JFormattedTextField dateFieldDeath = new
-		 * JFormattedTextField(df); dateFieldDeath.setPreferredSize(new Dimension(20, 20));
-		 * dateFieldDeath.setValue(new Date());
-		 */
-
-		// TODO Enfant à modifier plus tard
+		// enfants
 		JLabel childLabel = new JLabel("Enfant(s) ");
-		String child[] = { "Household", "Office", "Extended Family", "Company (US)",
-				"Company (World)", "Team", "Will", "Birthday Card List", "High School", "Country",
-				"Continent", "Planet" };
-		final JList<String> listChild = new JList<String>(child);
-
+		listChildModel = new DefaultListModel<String>();
+		final JList<String> listChild = new JList<String>(listChildModel);
 		listChild.setVisibleRowCount(4);
 		scrollpane = new JScrollPane(listChild);
 
@@ -244,27 +233,19 @@ public class EditPersonDialog extends JDialog implements ActionListener {
 		g.gridwidth = 6;
 		lgbPanel.add(dateFieldBirth, g);
 
-		/*
-		 * FIXME garder ou non ? g.gridy = 4; g.gridx = 0; g.weightx = 0; g.gridwidth = 1;
-		 * lgbPanel.add(dateDeathLabel, g);
-		 * 
-		 * g.gridy = 4; g.gridx = 2; g.weightx = 0; g.gridwidth = 6; lgbPanel.add(dateFieldDeath,
-		 * g);
-		 */
-
-		g.gridy = 4;// 5;
+		g.gridy = 4;
 		g.gridx = 0;
 		g.weightx = 0;
 		g.gridwidth = 1;
 		lgbPanel.add(childLabel, g);
 
-		g.gridy = 4;// 5;
+		g.gridy = 4;
 		g.gridx = 2;
 		g.weightx = 0;
 		g.gridwidth = 6;
 		lgbPanel.add(scrollpane, g);
 
-		g.gridy = 4;// 5;
+		g.gridy = 4;
 		g.gridx = 8;
 		g.weightx = 0;
 		g.gridwidth = 1;
@@ -340,27 +321,15 @@ public class EditPersonDialog extends JDialog implements ActionListener {
 				System.out.println(firstNameFieldText);
 				thePerson.setFirstname(firstNameFieldText);
 
-				String genderText;
-				genderText = femaleButton.isSelected() ? femaleButton.getText() : maleButton
-						.isSelected() ? maleButton.getText() : "non determine";
-				System.out.println(genderText);
-				Gender genderTextField = null;
-				if (genderText == "Homme") {
-					genderTextField = fr.arbre.model.Gender.MALE;
+				if (femaleButton.isSelected()) {
+					thePerson.setGender(Gender.FEMALE);
+				} else {
+					thePerson.setGender(Gender.MALE);
 				}
-				if (genderText == "Femme") {
-					genderTextField = fr.arbre.model.Gender.FEMALE;
-				}
-				thePerson.setGender(genderTextField);
 
 				String birthDateText = dateFieldBirth.getText();
 				System.out.println(birthDateText);
 				thePerson.setBirthdate(birthDateText);
-
-				/*
-				 * String deathDateText = dateFieldDeath.getText();
-				 * System.out.println(deathDateText); thePerson.setBirthdate(deathDateText);
-				 */
 
 				String childText = (String) listChild.getSelectedValue();
 				System.out.println(childText);
@@ -551,9 +520,10 @@ public class EditPersonDialog extends JDialog implements ActionListener {
 	}
 
 	private void addFather() {
-		thePerson.setFatherId(Tableau.showPersonSelection(null, "Sélectionner le père"));
+		int id = Tableau.showPersonByGenderSelection("Sélectionner le père", Gender.MALE);
 
-		if (thePerson.getFatherId() > 0) {
+		if (id > 0) {
+			thePerson.setFatherId(id);
 			SimplePerson temp = null;
 			try {
 				temp = CsvPersonDao.getInstance().getPerson(thePerson.getFatherId());
@@ -568,14 +538,16 @@ public class EditPersonDialog extends JDialog implements ActionListener {
 					fatherNameField.setText(temp.getFirstname() + " " + temp.getName());
 			} else {
 				fatherNameField.setText("");
+				thePerson.setFatherId(0);
 			}
 		}
 	}
 
 	private void addMother() {
-		thePerson.setMotherId(Tableau.showPersonSelection(null, "Sélectionner la mère"));
+		int id = Tableau.showPersonByGenderSelection("Sélectionner la mère", Gender.FEMALE);
 
-		if (thePerson.getMotherId() > 0) {
+		if (id > 0) {
+			thePerson.setMotherId(id);
 			SimplePerson temp = null;
 			try {
 				temp = CsvPersonDao.getInstance().getPerson(thePerson.getMotherId());
@@ -590,11 +562,40 @@ public class EditPersonDialog extends JDialog implements ActionListener {
 					motherNameField.setText(temp.getFirstname() + " " + temp.getName());
 			} else {
 				motherNameField.setText("");
+				thePerson.setMotherId(0);
 			}
 		}
 	}
 
 	private void addChild() {
-		// FIXME thePerson.addChildId(123456);
+		int id = Tableau.showPersonSelection("Sélectionner les enfants");
+
+		if (id > 0) {
+			thePerson.addChildId(id);
+			SimplePerson temp = null;
+			try {
+				temp = CsvPersonDao.getInstance().getPerson(
+						(thePerson.getChildrenId()).get(thePerson.getChildrenId().size() - 1));
+			} catch (PersonIdException e) {
+				e.printStackTrace();
+				temp = null;
+			}
+
+			if (temp != null) {
+				thePerson.getChildrenId().remove((thePerson.getChildrenId().size()) - 1);
+
+				if (thePerson.getChildrenId().contains(temp.getId()) == false) {
+					thePerson.addChildId(temp.getId());
+					if (temp.getFirstname().isEmpty()) {
+						listChildModel.addElement(temp.getName());
+					} else {
+						listChildModel.addElement(temp.getFirstname() + " " + temp.getName());
+					}
+				} else {
+					listChildModel.addElement(null);
+				}
+
+			}
+		}
 	}
 }

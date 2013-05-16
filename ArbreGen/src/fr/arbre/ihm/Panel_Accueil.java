@@ -39,7 +39,7 @@ public class Panel_Accueil extends JPanel {
 
 	class Popup_Action implements ActionListener {
 		public void actionPerformed(ActionEvent arg0) {
-			new Tableau(null, "Afficher une table", false);
+			new Tableau("Afficher une table", false, null);
 		}
 	}
 

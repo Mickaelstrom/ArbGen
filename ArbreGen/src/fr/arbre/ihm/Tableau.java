@@ -3,25 +3,27 @@ package fr.arbre.ihm;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
-import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
-import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+
+import fr.arbre.model.Gender;
 
 @SuppressWarnings("serial")
 public class Tableau extends JDialog {
 
-	public Tableau(Frame frame, String title, boolean selectON) {
-		super(frame, title, true);
+	public Tableau(String title, boolean selectON, Gender gender) {
+		// super(new JFrame(), title, true);
+		setTitle(title);
+		setModal(true);
 
 		// TODO implémenter un jfilechooser pour selectionner quel csv afficher
 
-		final Table_Csv2Array tableau = new Table_Csv2Array("resources/CSV/gen-dbz.csv");
+		final Table_Csv2Array tableau = new Table_Csv2Array("resources/CSV/gen-dbz.csv", gender);
 		JScrollPane scrollPane = new JScrollPane(tableau);
 		scrollPane.setPreferredSize(new Dimension(700, 300));
 
@@ -71,9 +73,13 @@ public class Tableau extends JDialog {
 	 *         <b>Note :</b> Retourne 0 si annulation
 	 *         </p>
 	 */
-	public static int showPersonSelection(JFrame frame, String title) {
-		new Tableau(frame, title, true);
+	public static int showPersonSelection(String title) {
+		new Tableau(title, true, null);
 		return id;
 	}
 
+	public static int showPersonByGenderSelection(String title, Gender gender) {
+		new Tableau(title, true, gender);
+		return id;
+	}
 }
