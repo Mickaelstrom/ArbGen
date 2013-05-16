@@ -4,13 +4,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Classe qui représente une personne de la famille.
+ * Représente une personne de la famille.<br/>
+ * Contient les infos relatives à la personne et ses liens dans la famille.
  */
 @SuppressWarnings("serial")
 public class SimplePerson implements Person {
 	/**
-	 * Les identifiants sont attribués à partir de 1 (personne de qui l'arbre va être produit), puis
-	 * incrémenté à la création de chaque personne
+	 * Identifiants attribués à partir de 1 (première personne crée)<br/>
+	 * Incrémenté à la création d'une personne
 	 */
 	private static int currentId = 1;
 
@@ -25,9 +26,10 @@ public class SimplePerson implements Person {
 	private int fatherId;
 	private String picname;
 	private List<Integer> childrenId;
+	private PersonFrame frame;
 
 	public SimplePerson() {
-		this("", "", "", Gender.MALE, 0, 0, "", new ArrayList<Integer>());
+		this("", "", "", Gender.MALE, 0, 0, "vide.jpg", new ArrayList<Integer>());
 	}
 
 	public SimplePerson(String name, String firstname, String birthdate, Gender gender,
@@ -40,6 +42,7 @@ public class SimplePerson implements Person {
 		this.fatherId = fatherId;
 		this.picname = picname;
 		this.childrenId = childrenId;
+		this.frame = null;
 
 		id = generateId();
 	}
@@ -90,6 +93,11 @@ public class SimplePerson implements Person {
 		return childrenId;
 	}
 
+	@Override
+	public PersonFrame getFrame() {
+		return frame;
+	}
+
 	// Setters ----------------------------------------------------------------
 
 	@Override
@@ -125,6 +133,11 @@ public class SimplePerson implements Person {
 	@Override
 	public void setPicname(String picname) {
 		this.picname = picname;
+	}
+
+	@Override
+	public void setFrame(PersonFrame frame) {
+		this.frame = frame;
 	}
 
 	@Override
@@ -173,6 +186,7 @@ public class SimplePerson implements Person {
 		copy.setBirthdate(birthdate);
 		copy.setPicname(picname);
 		copy.setChildrenId(childrenId);
+		copy.setFrame(frame);
 
 		return copy;
 	}

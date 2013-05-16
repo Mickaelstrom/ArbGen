@@ -9,9 +9,13 @@ import java.awt.event.ComponentEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.Iterator;
 
 import javax.imageio.ImageIO;
 import javax.swing.JPanel;
+
+import fr.arbre.dao.csv.CsvPersonDao;
+import fr.arbre.model.SimplePerson;
 
 @SuppressWarnings("serial")
 public class TreeDrawPanel extends JPanel {
@@ -38,11 +42,11 @@ public class TreeDrawPanel extends JPanel {
 	}
 
 	private Image newImage() {
-		Image img = createImage(calculateWidth(), calculateHeight());
+		Image img = createImage(imageWidth(), imageHeight());
 		Graphics g = img.getGraphics();
 
-		g.setColor(Color.WHITE); // FIXME couleur de fond ? (ou image ?)
-		g.fillRect(0, 0, calculateWidth(), calculateHeight());
+		g.setColor(Color.GRAY);
+		g.fillRect(0, 0, imageWidth(), imageHeight());
 
 		if (offscreen != null) {
 			g.drawImage(offscreen, 0, 0, this);
@@ -53,19 +57,20 @@ public class TreeDrawPanel extends JPanel {
 
 		return img;
 	}
-	
-	private int calculateWidth(){
+
+	private int imageWidth() {
 		/**
-		 * TODO implémenter le calcul de la largeur max en fonction du nombre max de personne sur une meme ligne
+		 * TODO implémenter le calcul de la largeur max en fonction du nombre max de personne sur
+		 * une meme ligne
 		 */
-		return 1600;
+		return 900;
 	}
-	
-	private int calculateHeight(){
+
+	private int imageHeight() {
 		/**
 		 * TODO implémenter le calcul de la hauteur max en fonction du nombre max de ligne
 		 */
-		return 1024;
+		return 1500;
 	}
 
 	/**
@@ -82,31 +87,47 @@ public class TreeDrawPanel extends JPanel {
 		Graphics g = getImage().getGraphics();
 		g.setFont(f);
 
-		g.setColor(Color.BLACK);
-		g.drawLine(0, 0, calculateWidth(), calculateHeight());
+		// g.setColor(Color.BLACK);
+		// g.drawLine(0, 0, calculateWidth(), calculateHeight());
 
 		g.setColor(blue);
-		g.fillRoundRect(500, 500, 256, 256, 16, 16);
+		g.fillRoundRect(500, 500, 100, 120, 0, 0);
 		g.setColor(Color.BLACK);
-		g.drawRoundRect(500, 500, 256, 256, 16, 16);
+		g.drawRoundRect(500, 500, 100, 120, 0, 0);
 		g.setColor(pink);
-		g.fillRoundRect(500 + 256 + 16, 500, 256, 256, 16, 16);
+		g.fillRoundRect(500 + 200, 500, 100, 120, 0, 0);
 		g.setColor(Color.BLACK);
-		g.drawRoundRect(500 + 256 + 16, 500, 256, 256, 16, 16);
+		g.drawRoundRect(500 + 200, 500, 100, 120, 0, 0);
 
 		sw = g.getFontMetrics().stringWidth("Sangoku");
-		g.drawString("Sangoku", 500 + (256 - sw) / 2, 600+256/2);
+		g.drawString("Sangoku", 500 + (100 - sw) / 2, 500 + 120 - g.getFontMetrics().getDescent());
 		sw = g.getFontMetrics().stringWidth("Chichi");
-		g.drawString("Chichi", 500 + 256 + 16 + (256 - sw) / 2, 600+256/2);
+		g.drawString("Chichi", 500 + 200 + (100 - sw) / 2, 500 + 100 + g.getFontMetrics()
+				.getHeight());
 
 		try {
-			img = ImageIO.read(new File(
-					"resources/Pictures/strawberry.jpg"));
+			img = ImageIO.read(new File("resources/Pictures/sangoku.jpg"));
 		} catch (IOException e) {
+			e.printStackTrace();
 		}
 
 		if (img != null) {
-			g.drawImage(img, 400, 200, null);
+			g.drawImage(img.getScaledInstance(90, 90, Image.SCALE_SMOOTH), 505, 505, null);
+		}
+
+		g.dispose();
+
+		repaint();
+	}
+
+	public void drawTree() {
+		CsvPersonDao dao = CsvPersonDao.getInstance();
+		Graphics g = getImage().getGraphics();
+		Font f = new Font(Font.DIALOG, Font.PLAIN, 20);
+		g.setFont(f);
+
+		for (Iterator<SimplePerson> it = dao.getPersons().iterator(); it.hasNext();/* */) {
+			it.next().getFrame().draw(g);
 		}
 
 		g.dispose();

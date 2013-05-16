@@ -23,6 +23,8 @@ public interface Person extends Serializable {
 	List<Integer> getChildrenId();
 
 	String getPicname();
+	
+	PersonFrame getFrame();
 
 	// Setters ----------------------------------------------------------------
 	void setName(String name);
@@ -42,6 +44,8 @@ public interface Person extends Serializable {
 	void setChildrenId(List<Integer> childrenId);
 
 	void setPicname(String picname);
+	
+	void setFrame(PersonFrame frame);
 
 	void addChildId(int childId);
 	
