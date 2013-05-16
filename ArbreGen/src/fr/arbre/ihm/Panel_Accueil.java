@@ -13,18 +13,20 @@ import javax.swing.JPanel;
 @SuppressWarnings("serial")
 public class Panel_Accueil extends JPanel {
 	private JLabel tree;
+	private Action action = new Action();
+	private Fenetre reference;
+	private JButton setarbre = new JButton("Affiche une table");
+	private JButton newtree = new JButton("Nouvel arbre");
+	private JButton changetree = new JButton("Charger arbre");
 
-	private Popup_Action popup_action = new Popup_Action();
+	public Panel_Accueil(Fenetre ref) {
 
-	public Panel_Accueil() {
+		reference = ref;
 
 		tree = new JLabel(new ImageIcon("resources/arbre.png"));
 		// tree.setMinimumSize(new Dimension(50,50));
 
 		JPanel bottomPanel = new JPanel(new GridLayout(3, 1));
-		JButton newtree = new JButton("Nouvel arbre");
-		JButton changetree = new JButton("Changer arbre");
-		JButton setarbre = new JButton("Affiche une table");
 
 		// newtree.setPreferredSize(new Dimension(50,100));
 
@@ -34,12 +36,21 @@ public class Panel_Accueil extends JPanel {
 		bottomPanel.add(setarbre);
 		this.add(bottomPanel, BorderLayout.EAST);
 
-		setarbre.addActionListener(popup_action);
+		setarbre.addActionListener(action);
+		newtree.addActionListener(action);
+		changetree.addActionListener(action);
+
 	}
 
-	class Popup_Action implements ActionListener {
-		public void actionPerformed(ActionEvent arg0) {
-			new Tableau("Afficher une table", false, null);
+	class Action implements ActionListener {
+		public void actionPerformed(ActionEvent e) {
+			if (e.getSource() == setarbre) {
+				new Tableau("Afficher une table", false, null);
+			} else if (e.getSource() == newtree) {
+				reference.setPanel(2);
+			} else if (e.getSource() == changetree) {
+				reference.setPanel(3);
+			}
 		}
 	}
 

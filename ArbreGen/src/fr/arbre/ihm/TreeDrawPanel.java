@@ -12,13 +12,14 @@ import java.io.IOException;
 import java.util.Iterator;
 
 import javax.imageio.ImageIO;
-import javax.swing.JPanel;
+import javax.swing.ImageIcon;
+import javax.swing.JLabel;
 
 import fr.arbre.dao.csv.CsvPersonDao;
 import fr.arbre.model.SimplePerson;
 
 @SuppressWarnings("serial")
-public class TreeDrawPanel extends JPanel {
+public class TreeDrawPanel extends JLabel {
 
 	private Image offscreen; // image où sera dessiné l'arbre
 
@@ -42,11 +43,14 @@ public class TreeDrawPanel extends JPanel {
 	}
 
 	private Image newImage() {
-		Image img = createImage(imageWidth(), imageHeight());
+		int imageWidth = CsvPersonDao.getInstance().getImageWidth();
+		int imageHeight = CsvPersonDao.getInstance().getImageHeight();
+		Image img = createImage(imageWidth, imageHeight);
+		this.setSize(imageWidth, imageHeight);
 		Graphics g = img.getGraphics();
 
 		g.setColor(Color.WHITE);
-		g.fillRect(0, 0, imageWidth(), imageHeight());
+		g.fillRect(0, 0, imageWidth, imageHeight);
 
 		if (offscreen != null) {
 			g.drawImage(offscreen, 0, 0, this);
@@ -54,23 +58,30 @@ public class TreeDrawPanel extends JPanel {
 		}
 
 		repaint();
+		this.setIcon(new ImageIcon(img));
+		this.validate();
 
 		return img;
 	}
 
-	private int imageWidth() {
-		/**
-		 * TODO implémenter le calcul de la largeur max en fonction du nombre max de personne sur
-		 * une meme ligne
-		 */
-		return 900;
-	}
+	public BufferedImage toBufferedImage() {
+		Image image = getImage();
 
-	private int imageHeight() {
-		/**
-		 * TODO implémenter le calcul de la hauteur max en fonction du nombre max de ligne
-		 */
-		return 1500;
+		if (image instanceof BufferedImage) {
+			return ((BufferedImage) image);
+		} else {
+
+			image = new ImageIcon(image).getImage();
+
+			BufferedImage bufferedImage = new BufferedImage(image.getWidth(null),
+					image.getHeight(null), BufferedImage.TYPE_INT_RGB);
+
+			Graphics g = bufferedImage.createGraphics();
+			g.drawImage(image, 0, 0, null);
+			g.dispose();
+
+			return (bufferedImage);
+		}
 	}
 
 	/**

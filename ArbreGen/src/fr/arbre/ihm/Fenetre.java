@@ -9,21 +9,23 @@ import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JPanel;
 import javax.swing.KeyStroke;
 
 @SuppressWarnings("serial")
 public class Fenetre extends JFrame {
 
-	private JMenuBar	menuBar		= new JMenuBar();
-	private JMenu		File		= new JMenu("File");
-	private JMenuItem	Exit		= new JMenuItem("Exit");
-	private Exit_Action	exit_action	= new Exit_Action();
+	private JMenuBar menuBar = new JMenuBar();
+	private JMenu File = new JMenu("File");
+	private JMenuItem Exit = new JMenuItem("Exit");
+	private Exit_Action exit_action = new Exit_Action();
+	private JPanel panel = new JPanel();
 
 	public Fenetre() {
 
 		this.setTitle("Accueil");
 
-		Panel_Accueil panel = new Panel_Accueil();
+		setPanel(1);
 
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		this.setMinimumSize(new Dimension(400, 300));
@@ -47,6 +49,23 @@ public class Fenetre extends JFrame {
 	private void initMenu() {
 		Exit.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Q, KeyEvent.CTRL_MASK));
 		this.File.add(Exit);
+	}
+
+	public void setPanel(int i) {
+		this.remove(panel);
+		if (i == 1) {
+			this.panel = new Panel_Accueil(this);
+			this.setExtendedState(JFrame.NORMAL);
+		} else if (i == 2) {
+			this.panel = new Panel_AffichageArbre("");
+			this.setExtendedState(JFrame.MAXIMIZED_BOTH);
+		} else if (i == 3) {
+			this.panel = new Panel_AffichageArbre("resources/CSV/gen-dbz.csv");
+			this.setExtendedState(JFrame.MAXIMIZED_BOTH);
+		}
+
+		this.add(panel);
+		this.validate();
 	}
 
 	class Exit_Action implements ActionListener {

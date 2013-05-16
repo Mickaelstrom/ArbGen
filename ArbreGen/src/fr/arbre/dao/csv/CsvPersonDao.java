@@ -264,7 +264,7 @@ public class CsvPersonDao {
 				maxW = multimap.get(key).size();
 			}
 		}
-		imageWidth = PersonFrame.WIDTH + 2 * PersonFrame.WIDTH * (maxW - 1);
+		imageWidth = PersonFrame.WIDTH + 2 * PersonFrame.WIDTH * maxW;
 
 		for (Integer key : multimap.keySet()) {
 			if (key < minY)
@@ -272,7 +272,7 @@ public class CsvPersonDao {
 			if (key > maxY)
 				maxY = key;
 		}
-		imageHeight = (int) (1.5 * (maxY - minY) * PersonFrame.HEIGHT + 2 * MARGIN);
+		imageHeight = (int) (1.5 * (maxY - minY + 1) * PersonFrame.HEIGHT + 2 * MARGIN);
 
 		if (minY != 0) {
 			offsetY = -minY;
@@ -281,8 +281,8 @@ public class CsvPersonDao {
 		// parcourir les générations
 		for (int key = minY; key <= maxY; key++) {
 			int size = multimap.get(key).size();
-			int width = PersonFrame.WIDTH + (size - 1) * PersonFrame.WIDTH * 2; // largeur de la
-																				// ligne
+			int width = PersonFrame.WIDTH + size * PersonFrame.WIDTH * 2; // largeur de la
+																			// ligne
 			int cx = (((int) imageWidth) - width) / 2;
 			int x = MARGIN + cx;
 
@@ -296,13 +296,13 @@ public class CsvPersonDao {
 				}
 				if (person != null) {
 					Integer[] brothers = getBrothers(person);
-					int y = ((int) imageHeight)
-							- (MARGIN + PersonFrame.HEIGHT * 2 * (key + offsetY));
+					int y = (int) (((int) imageHeight) - (MARGIN + PersonFrame.HEIGHT * 1.5
+							* (key + offsetY + 1)));
 					for (int j = 0; j < brothers.length; j++, x += 2 * PersonFrame.WIDTH) {
 						try {
 							getPerson(brothers[j]).setFrame(
 									new PersonFrame(getPerson(brothers[j]), x, y));
-							System.out.println("id=" + brothers[j] + ", x=" + x + ",y=" + y);
+							// System.out.println("id=" + brothers[j] + ", x=" + x + ",y=" + y);
 						} catch (PersonIdException e) {
 							e.printStackTrace();
 						}

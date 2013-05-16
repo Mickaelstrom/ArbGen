@@ -129,7 +129,6 @@ public class PersonFrame {
 		// dessiner l'image
 		try {
 			img = ImageIO.read(new File("resources/Pictures/" + refPerson.getPicname()));
-			System.out.println(refPerson.getPicname());
 		} catch (IOException e) {
 			img = null;
 		}
