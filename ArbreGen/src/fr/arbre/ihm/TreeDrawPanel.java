@@ -45,6 +45,10 @@ public class TreeDrawPanel extends JLabel {
 	private Image newImage() {
 		int imageWidth = CsvPersonDao.getInstance().getImageWidth();
 		int imageHeight = CsvPersonDao.getInstance().getImageHeight();
+		if (imageWidth == 0)
+			imageWidth = 1024;
+		if (imageHeight == 0)
+			imageHeight = 760;
 		Image img = createImage(imageWidth, imageHeight);
 		this.setSize(imageWidth, imageHeight);
 		Graphics g = img.getGraphics();

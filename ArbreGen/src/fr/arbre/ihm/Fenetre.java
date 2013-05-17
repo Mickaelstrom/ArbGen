@@ -25,7 +25,8 @@ public class Fenetre extends JFrame {
 
 		this.setTitle("Accueil");
 
-		setPanel(1);
+		this.panel = new Panel_Accueil(this);
+		this.setExtendedState(JFrame.NORMAL);
 
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		this.setMinimumSize(new Dimension(400, 300));

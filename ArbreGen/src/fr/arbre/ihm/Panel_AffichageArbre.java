@@ -78,7 +78,10 @@ public class Panel_AffichageArbre extends JPanel {
 		affichageArbrePanel.add(saveTab, BorderLayout.WEST);
 		affichageArbrePanel.add(veriffErrors, BorderLayout.WEST);
 
-		if (filename != null && !filename.isEmpty()) {
+		if (filename == null || filename.isEmpty()) {
+			tree.setPreferredSize(new Dimension(1024, 760));
+			this.add(tree, BorderLayout.CENTER);
+		} else {
 			JScrollPane treeScroller = new JScrollPane(tree);
 			treeScroller.setPreferredSize(new Dimension(1024, 760));
 			this.add(treeScroller, BorderLayout.CENTER);
@@ -88,9 +91,6 @@ public class Panel_AffichageArbre extends JPanel {
 					tree.drawTree();
 				}
 			});
-		} else {
-			tree.setPreferredSize(new Dimension(1024, 760));
-			this.add(tree, BorderLayout.CENTER);
 		}
 		this.add(menu, BorderLayout.WEST);
 

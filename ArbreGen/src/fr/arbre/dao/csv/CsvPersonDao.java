@@ -229,8 +229,8 @@ public class CsvPersonDao {
 		}
 	}
 
-	private int imageWidth;
-	private int imageHeight;
+	private int imageWidth = 0;
+	private int imageHeight = 0;
 
 	public int getImageWidth() {
 		return imageWidth;
