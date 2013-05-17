@@ -19,7 +19,8 @@ public class CsvPersonDao {
 	// ---------------------------------------------------------------------------------------------
 
 	protected List<SimplePerson> persons;
-	protected String[] header; // Entetes des colonnes du JTable
+	protected final String[] header = { "id", "Prénom", "Nom", "Genre", "Père", "Mère",
+			"Date de naissance", "Nom de la photo", "Enfants" }; // Entetes des colonnes du JTable
 	protected String[][] table; // Données pour le JTable
 
 	// ---------------------------------------------------------------------------------------------
@@ -50,7 +51,7 @@ public class CsvPersonDao {
 		Csv2Array data = new Csv2Array(filename);
 		String[][] tab = data.toArray();
 
-		header = tab[0].clone();
+		// header = tab[0].clone();
 		table = new String[tab.length - 1][data.getMaxColumn()];
 		for (int i = 0; i < table.length; i++) {
 			for (int j = 0; j < table[0].length; j++) {
@@ -353,5 +354,31 @@ public class CsvPersonDao {
 		brothers.toArray(array);
 
 		return array;
+	}
+
+	public void addPerson(SimplePerson p) {
+		if (persons == null)
+			persons = new ArrayList<SimplePerson>();
+
+		persons.add(p);
+		String[][] copy = new String[persons.size()][header.length];
+		for (int row = 0; row < persons.size() - 1; row++) {
+			copy[row] = table[row].clone();
+		}
+		copy[persons.size() - 1][0] = String.valueOf(p.getId());
+		copy[persons.size() - 1][1] = p.getFirstname();
+		copy[persons.size() - 1][2] = p.getName();
+		copy[persons.size() - 1][3] = (p.getGender().isMale()) ? "M" : "F";
+		copy[persons.size() - 1][4] = String.valueOf(p.getFatherId());
+		copy[persons.size() - 1][5] = String.valueOf(p.getMotherId());
+		copy[persons.size() - 1][6] = p.getBirthdate();
+		copy[persons.size() - 1][7] = p.getPicname();
+		copy[persons.size() - 1][8] = "";
+		for (int i : p.getChildrenId()) {
+			copy[persons.size() - 1][8] += String.valueOf(i) + " ";
+		}
+		System.out.println(p.toString());
+		for (int i = 0; i < header.length; i++)
+			System.out.println(copy[persons.size() - 1][i] + " ");
 	}
 }

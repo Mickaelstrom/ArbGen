@@ -21,6 +21,7 @@ import javax.swing.ToolTipManager;
 import javax.swing.filechooser.FileFilter;
 
 import fr.arbre.dao.csv.CsvPersonDao;
+import fr.arbre.model.SimplePerson;
 
 @SuppressWarnings("serial")
 public class Panel_AffichageArbre extends JPanel {
@@ -189,7 +190,10 @@ public class Panel_AffichageArbre extends JPanel {
 
 			// Ouverture fenetre nouveau membre
 			System.out.println("NewMember.");
-
+			SimplePerson p = EditPersonDialog.showDialog(null);
+			if(p!=null){
+				CsvPersonDao.getInstance().addPerson(p);
+			}
 		}
 	}
 
