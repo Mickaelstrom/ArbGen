@@ -15,9 +15,11 @@ public class Table_Csv2Array extends JTable {
 
 	public Table_Csv2Array(String filename, Gender gender) {
 		CsvPersonDao dao = CsvPersonDao.getInstance();
-		if (filename != null) {
+		
+		if (filename != null && !filename.isEmpty()) {
 			dao.load(filename);
 		}
+		
 		String[][] tab = null;
 		if (gender == null) {
 			tab = dao.getTable();

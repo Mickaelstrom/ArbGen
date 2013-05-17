@@ -26,6 +26,7 @@ import fr.arbre.model.SimplePerson;
 @SuppressWarnings("serial")
 public class Panel_AffichageArbre extends JPanel {
 	private TreeDrawPanel tree;
+	private JScrollPane treeScroller;
 
 	private enum Typesave {
 		DESSIN, CSV;
@@ -79,20 +80,16 @@ public class Panel_AffichageArbre extends JPanel {
 		affichageArbrePanel.add(saveTab, BorderLayout.WEST);
 		affichageArbrePanel.add(veriffErrors, BorderLayout.WEST);
 
-		if (filename == null || filename.isEmpty()) {
-			tree.setPreferredSize(new Dimension(1024, 760));
-			this.add(tree, BorderLayout.CENTER);
-		} else {
-			JScrollPane treeScroller = new JScrollPane(tree);
-			treeScroller.setPreferredSize(new Dimension(1024, 760));
-			this.add(treeScroller, BorderLayout.CENTER);
-			CsvPersonDao.getInstance().load(filename);
-			SwingUtilities.invokeLater(new Runnable() {
-				public void run() {
-					tree.drawTree();
-				}
-			});
-		}
+		treeScroller = new JScrollPane(tree);
+		treeScroller.setPreferredSize(new Dimension(1024, 760));
+		this.add(treeScroller, BorderLayout.CENTER);
+		// CsvPersonDao.getInstance().load(filename);
+		SwingUtilities.invokeLater(new Runnable() {
+			public void run() {
+				tree.drawTree();
+			}
+		});
+
 		this.add(menu, BorderLayout.WEST);
 
 		// Lien des action listener aux boutons
@@ -191,8 +188,15 @@ public class Panel_AffichageArbre extends JPanel {
 			// Ouverture fenetre nouveau membre
 			System.out.println("NewMember.");
 			SimplePerson p = EditPersonDialog.showDialog(null);
-			if(p!=null){
+			if (p != null) {
 				CsvPersonDao.getInstance().addPerson(p);
+
+				SwingUtilities.invokeLater(new Runnable() {
+					public void run() {
+						CsvPersonDao.getInstance().calculateTreeInfos();
+						tree.drawTree();
+					}
+				});
 			}
 		}
 	}
@@ -203,7 +207,6 @@ public class Panel_AffichageArbre extends JPanel {
 			// Ouverture fenetre tableau
 			System.out.println("displayMemberTable.");
 			new Tableau("Afficher une table", false, null);
-
 		}
 	}
 

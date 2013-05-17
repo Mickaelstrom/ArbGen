@@ -25,7 +25,7 @@ public class Tableau extends JDialog {
 
 		// TODO implémenter un jfilechooser pour selectionner quel csv afficher
 
-		final Table_Csv2Array tableau = new Table_Csv2Array("resources/CSV/gen-dbz.csv", gender);
+		final Table_Csv2Array tableau = new Table_Csv2Array("", gender);
 		JScrollPane scrollPane = new JScrollPane(tableau);
 		scrollPane.setPreferredSize(new Dimension(700, 300));
 

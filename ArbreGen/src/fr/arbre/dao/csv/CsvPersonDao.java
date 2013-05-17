@@ -172,7 +172,7 @@ public class CsvPersonDao {
 
 	// ---------------------------------------------------------------------------------------------
 
-	private void calculateTreeInfos() {
+	public void calculateTreeInfos() {
 		/**
 		 * <b>Clé :</b> Profondeur d'indentation de la génération.<br/>
 		 * <b>Valeur :</b> Une liste d'identifiants des personnes sur cette ligne.
@@ -377,8 +377,6 @@ public class CsvPersonDao {
 		for (int i : p.getChildrenId()) {
 			copy[persons.size() - 1][8] += String.valueOf(i) + " ";
 		}
-		System.out.println(p.toString());
-		for (int i = 0; i < header.length; i++)
-			System.out.println(copy[persons.size() - 1][i] + " ");
+		table = copy;
 	}
 }
